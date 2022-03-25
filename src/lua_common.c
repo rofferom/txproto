@@ -81,7 +81,7 @@ void sp_lua_close_ctx(TXLuaContext **s)
 
     for (int i = 0; i < lctx->loaded_lib_list_len; i++) {
         if (lctx->loaded_lib_list[i].libp)
-            dlclose(lctx->loaded_lib_list[i].libp);
+            sp_dlclose(lctx->loaded_lib_list[i].libp);
         av_free(lctx->loaded_lib_list[i].name);
         av_free(lctx->loaded_lib_list[i].path);
     }
@@ -799,7 +799,7 @@ int sp_lua_load_library(TXLuaContext *lctx, const char *lib)
             memcpy(path + cdir_len + lib_len, lib_suffix, lib_suffix_len);
             path[path_len - 1] = '\0';
 
-            void *libp = dlopen(path, RTLD_NOW | RTLD_LOCAL);
+            void *libp = sp_dlopen(path);
             if (!libp) {
                 free(path);
                 continue;
@@ -811,7 +811,7 @@ int sp_lua_load_library(TXLuaContext *lctx, const char *lib)
             memcpy(sym_name + sym_prefix_len, lib, lib_len);
             sym_name[sym_name_len - 1] = '\0';
 
-            void *sym = dlsym(libp, sym_name);
+            void *sym = sp_dlsym(libp, sym_name);
             free(sym_name);
             if (sym) {
                 luaL_requiref(L, LUA_LOADLIBNAME, luaopen_package, 1);
