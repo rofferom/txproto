@@ -56,6 +56,17 @@ void sp_set_thread_name_self(const char *name)
 #include <stdbool.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+int sp_make_wakeup_pipe(int pipes[2])
+{
+    if (_pipe(pipes, 256, O_BINARY) != 0) {
+        pipes[0] = pipes[1] = -1;
+        return AVERROR(errno);
+    }
+
+    return 0;
+}
+#else
 /* Set the CLOEXEC flag on the given fd. */
 static bool set_cloexec(int fd)
 {
@@ -99,6 +110,7 @@ int sp_make_wakeup_pipe(int pipes[2])
 
     return 0;
 }
+#endif
 
 void sp_write_wakeup_pipe(int pipes[2], int64_t val)
 {
