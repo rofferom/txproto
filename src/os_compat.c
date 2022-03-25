@@ -123,3 +123,46 @@ void sp_close_wakeup_pipe(int pipes[2])
             close(pipes[i]);
     }
 }
+
+/* ================================================ */
+/* DYNAMIC LIBRARY SECTION                          */
+/* ================================================ */
+#ifdef _WIN32
+#include <windows.h>
+
+void* sp_dlopen(const char *path)
+{
+    return LoadLibraryA(path);
+}
+
+void sp_dlclose(void* handle)
+{
+    HMODULE module = handle;
+    FreeLibrary(module);
+}
+
+void* sp_dlsym(void* handle, const char *sym_name)
+{
+    HMODULE module = handle;
+    return GetProcAddress(module, sym_name);
+}
+
+#else
+#include <dlfcn.h>
+
+void* sp_dlopen(const char *path)
+{
+    return dlopen(path, RTLD_NOW | RTLD_LOCAL);
+}
+
+void sp_dlclose(void* handle)
+{
+    dlclose(handle);
+}
+
+void* sp_dlsym(void* handle, const char *sym_name)
+{
+    return dlsym(handle, sym_name);
+}
+
+#endif
