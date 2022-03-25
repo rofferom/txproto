@@ -35,8 +35,10 @@ void sp_set_thread_name_self(const char *name);
 #define noreturn
 #endif
 
-/* TODO Windows support for dlopen */
-#include <dlfcn.h>
+/* Dynamic library API */
+void* sp_dlopen(const char *path);
+void sp_dlclose(void* handle);
+void* sp_dlsym(void* handle, const char *path);
 
 /* Create a non-blocking named/FIFO pipe */
 int      sp_make_wakeup_pipe (int pipes[2]);
