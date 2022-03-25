@@ -156,10 +156,17 @@ if have_wayland
     endif
 endif
 
+link_args = []
+
+if host_machine.system() == 'windows'
+    link_args += ['-static-libgcc', '-Wl,-Bstatic', '-lpthread', '-Wl,-Bdynamic']
+endif
+
 inc = include_directories('./include')
 lib = library('txproto', sources,
     install: true,
     dependencies: dependencies,
+    link_args: link_args,
     soversion: ver_major,
     include_directories: inc,
 )
