@@ -12,6 +12,7 @@
 #include <libtxproto/mux.h>
 #include <libtxproto/txproto_main.h>
 #include <libtxproto/txproto.h>
+#include "packet_sink.h"
 
 #include "net.h"
 
@@ -302,6 +303,31 @@ AVBufferRef *tx_filtergraph_create(
 
 err:
     av_buffer_unref(&fctx_ref);
+    return NULL;
+}
+
+AVBufferRef *tx_packetsink_create(
+    TXMainContext *ctx,
+    const char *uri
+) {
+    int err;
+    AVBufferRef *psctx_ref = sp_packet_sink_alloc();
+    PacketSinkContext *psctx = (PacketSinkContext *) psctx_ref->data;
+
+    psctx->uri = strdup(uri);
+
+    err = sp_packet_sink_init(psctx_ref);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "Unable to init packet sink: %s!", av_err2str(err));
+        goto err;
+    }
+
+    sp_bufferlist_append_noref(ctx->ext_buf_refs, psctx_ref);
+
+    return psctx_ref;
+
+err:
+    av_buffer_unref(&psctx_ref);
     return NULL;
 }
 

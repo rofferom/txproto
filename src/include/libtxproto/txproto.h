@@ -73,6 +73,11 @@ AVBufferRef *tx_filtergraph_create(
     AVDictionary *init_opts
 );
 
+AVBufferRef *tx_packetsink_create(
+    TXMainContext *ctx,
+    const char *uri
+);
+
 int tx_link(
     TXMainContext *ctx,
     AVBufferRef *src,
