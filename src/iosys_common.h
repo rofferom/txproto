@@ -23,9 +23,10 @@
 #include <libavutil/opt.h>
 #include <libavutil/samplefmt.h>
 
-#include "fifo_frame.h"
+#include <libtxproto/logging.h>
 #include <libtxproto/utils.h>
-#include "logging.h"
+
+#include "fifo_frame.h"
 
 typedef const struct IOSysAPI {
     /**

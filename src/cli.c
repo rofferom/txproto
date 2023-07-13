@@ -20,9 +20,10 @@
 
 #include <editline/readline.h>
 
+#include <libtxproto/logging.h>
+#include <libtxproto/os_compat.h>
+
 #include "cli.h"
-#include "logging.h"
-#include "os_compat.h"
 
 struct TXCLIContext {
     SPClass *class;

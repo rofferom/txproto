@@ -30,10 +30,11 @@
 #include <libavutil/hwcontext.h>
 #include <libavutil/hwcontext_drm.h>
 
-#include "iosys_common.h"
-#include "logging.h"
+#include <libtxproto/logging.h>
+#include <libtxproto/os_compat.h>
 #include <libtxproto/utils.h>
-#include "os_compat.h"
+
+#include "iosys_common.h"
 
 typedef struct WaylandIOPriv {
     struct WaylandCtx *main_ctx;

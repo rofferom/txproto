@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <libavcodec/packet.h>
 
-#include "os_compat.h"
+#include <libtxproto/os_compat.h>
 
 enum SPPacketFIFOFlags {
     PACKET_FIFO_BLOCK_MAX_OUTPUT = (1 << 0),

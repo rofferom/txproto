@@ -22,8 +22,6 @@
 
 #include <pthread.h>
 
-#include "../config.h"
-
 /* Sets the thread name, if on an implementation where it's available */
 void sp_set_thread_name_self(const char *name);
 

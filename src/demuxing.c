@@ -20,9 +20,10 @@
 #include <libavutil/avstring.h>
 
 #include <libtxproto/demuxing.h>
-
 #include <libtxproto/utils.h>
+
 #include "ctrl_template.h"
+#include "fifo_packet.h"
 
 static void *demuxing_thread(void *arg)
 {

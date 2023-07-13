@@ -27,11 +27,12 @@
 #include <libplacebo/shaders/icc.h>
 #include <libplacebo/utils/libav.h>
 
+#include <libtxproto/logging.h>
+#include <libtxproto/os_compat.h>
+#include <libtxproto/utils.h>
+
 #include "ctrl_template.h"
 #include "interface_common.h"
-#include <libtxproto/utils.h>
-#include "logging.h"
-#include "os_compat.h"
 #include "../config.h"
 
 #define DEFAULT_USAGE_FLAGS (VK_IMAGE_USAGE_SAMPLED_BIT      |                 \
@@ -499,5 +500,5 @@ int sp_interface_init(AVBufferRef **s)
 fail:
     av_buffer_unref(&ctx_ref);
 
-    return err; 
+    return err;
 }

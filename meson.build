@@ -93,6 +93,7 @@ features = '"base'
 # scripts
 subdir('scripts')
 subdir('src')
+subdir('DOCS/examples')
 
 conf.set('COMPILER', '"' + cc.get_id() + ' ' + cc.version() + '"')
 conf.set('FEATURE_SET', features + '"')

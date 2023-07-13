@@ -21,8 +21,10 @@
 #  define _DARWIN_C_SOURCE 1
 # endif
 
-#include "os_compat.h"
+#include <libtxproto/os_compat.h>
 #include <libtxproto/utils.h>
+
+#include "../config.h"
 
 #if defined(HAVE_PTHREAD_SETNAME_NP) && !defined(__APPLE__)
 #include <string.h>

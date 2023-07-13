@@ -23,8 +23,8 @@
 #include <lauxlib.h>
 #include <luaconf.h>
 
+#include <libtxproto/logging.h>
 #include <libtxproto/utils.h>
-#include "logging.h"
 
 typedef struct LuaLoadedLibrary {
     char *name;

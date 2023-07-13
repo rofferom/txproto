@@ -23,6 +23,10 @@
 #include <libavutil/opt.h>
 #include <libavutil/pixdesc.h>
 
+#include <libtxproto/logging.h>
+
+#include "fifo_packet.h"
+#include "fifo_frame.h"
 #include "ctrl_template.h"
 
 int sp_decoding_connect(DecodingContext *dec, DemuxingContext *mux,

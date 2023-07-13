@@ -21,9 +21,8 @@
 #include <stdatomic.h>
 #include <libavformat/avformat.h>
 
+#include <libtxproto/logging.h>
 #include <libtxproto/utils.h>
-#include "fifo_packet.h"
-#include "logging.h"
 
 typedef struct DemuxingContext {
     SPClass *class;

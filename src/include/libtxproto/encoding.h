@@ -22,10 +22,11 @@
 #include <libavcodec/avcodec.h>
 #include <libswresample/swresample.h>
 
+#include <libtxproto/logging.h>
+#include <libtxproto/utils.h>
+
 #include "fifo_packet.h"
 #include "fifo_frame.h"
-#include <libtxproto/utils.h>
-#include "logging.h"
 
 /* Video encoder - we scale and convert in the encoding thread */
 typedef struct EncodingContext {

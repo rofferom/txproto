@@ -24,9 +24,9 @@
 #include <libavutil/time.h>
 #include <libavutil/random_seed.h>
 
-#include "logging.h"
+#include <libtxproto/logging.h>
+#include <libtxproto/os_compat.h>
 #include <libtxproto/utils.h>
-#include "os_compat.h"
 
 #define CANARY_PATTERN 0x7e1eca57ca5ab1a9
 

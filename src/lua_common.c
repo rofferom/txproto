@@ -26,7 +26,7 @@
 #include "lua_common.h"
 #include "lua_api.h"
 
-#include "logging.h"
+#include <libtxproto/logging.h>
 #include <libtxproto/utils.h>
 
 /* Built-in scripts */

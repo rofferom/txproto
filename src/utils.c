@@ -24,9 +24,9 @@
 #include <libavutil/bprint.h>
 #include <libavutil/random_seed.h>
 
+#include <libtxproto/logging.h>
+#include <libtxproto/os_compat.h>
 #include <libtxproto/utils.h>
-#include "os_compat.h"
-#include "logging.h"
 
 int64_t sp_sliding_win(SlidingWinCtx *ctx, int64_t num, int64_t pts,
                        AVRational tb, int64_t len, int do_avg)

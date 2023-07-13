@@ -18,7 +18,8 @@
 
 #include <stdatomic.h>
 
-#include "logging.h"
+#include <libtxproto/logging.h>
+
 #include "ctrl_template.h"
 
 static void ctrl_template_ctx_free(void *callback_ctx, void *ctx, void *dep_ctx)

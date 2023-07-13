@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <libavutil/frame.h>
 
-#include "os_compat.h"
+#include <libtxproto/os_compat.h>
 
 enum SPFrameFIFOFlags {
     FRAME_FIFO_BLOCK_MAX_OUTPUT = (1 << 0),

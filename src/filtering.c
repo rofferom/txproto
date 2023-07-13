@@ -23,10 +23,10 @@
 #include <libavfilter/buffersink.h>
 
 #include <libtxproto/filtering.h>
+#include <libtxproto/os_compat.h>
+#include <libtxproto/utils.h>
 
 #include "fifo_frame.h"
-#include "os_compat.h"
-#include <libtxproto/utils.h>
 #include "ctrl_template.h"
 
 FN_CREATING(FilterContext, FilterPad, in_pad, in_pads, num_in_pads)

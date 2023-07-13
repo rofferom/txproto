@@ -21,7 +21,7 @@
 #include <signal.h>
 #include <stdatomic.h>
 
-#include "logging.h"
+#include <libtxproto/logging.h>
 #include <libtxproto/utils.h>
 
 #include "version.h"

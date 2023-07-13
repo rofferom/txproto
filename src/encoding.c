@@ -22,10 +22,10 @@
 #include <libavutil/cpu.h>
 
 #include <libtxproto/encoding.h>
+#include <libtxproto/os_compat.h>
+#include <libtxproto/utils.h>
 
 #include "encoding_utils.h"
-#include "os_compat.h"
-#include <libtxproto/utils.h>
 #include "ctrl_template.h"
 
 static int swr_configure(EncodingContext *ctx, AVFrame *conf)

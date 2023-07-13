@@ -231,7 +231,7 @@ int sp_muxer_add_stream(MuxingContext *ctx, EncodingContext *enc)
     } else {
         ctx->stream_has_link = av_realloc(ctx->stream_has_link, sizeof(*ctx->stream_has_link) * (ctx->avf->nb_streams + 1));
         ctx->stream_codec_id = av_realloc(ctx->stream_codec_id, sizeof(*ctx->stream_codec_id) * (ctx->avf->nb_streams + 1));
- 
+
         AVStream *st = avformat_new_stream(ctx->avf, enc->codec);
         if (!st) {
             sp_log(ctx, SP_LOG_ERROR, "Unable to allocate stream!\n");

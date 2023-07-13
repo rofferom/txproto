@@ -22,11 +22,8 @@
 #include <libavcodec/avcodec.h>
 #include <libswresample/swresample.h>
 
-#include "fifo_packet.h"
-#include "fifo_frame.h"
+#include <libtxproto/demuxing.h>
 #include <libtxproto/utils.h>
-#include "logging.h"
-#include "demuxing.h"
 
 /* Video encoder - we scale and convert in the encoding thread */
 typedef struct DecodingContext {
