@@ -58,6 +58,3 @@ typedef struct TXMainContext {
     SPBufferList *events;
     SPBufferList *ext_buf_refs;
 } TXMainContext;
-
-#include "cli.h"
-#include "lua_common.h"

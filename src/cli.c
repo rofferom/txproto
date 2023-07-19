@@ -21,6 +21,7 @@
 #include <editline/readline.h>
 
 #include "cli.h"
+#include "lua_common.h"
 #include "logging.h"
 #include "os_compat.h"
 

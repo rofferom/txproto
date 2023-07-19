@@ -1,10 +1,5 @@
 # Base files
 sources = [
-    # Lua,
-    'lua_common.c',
-    'lua_api.c',
-    'lua_generic_api.c',
-
     # Sources
     'iosys_common.c',
 
@@ -32,11 +27,31 @@ sources = [
     'ctrl_template.c',
 ]
 
+# Executable sources
+executable_sources = [
+    # Lua,
+    'lua_common.c',
+    'lua_api.c',
+    'lua_generic_api.c',
+    builtin_lua_scripts,
+    # main()
+    'txproto_main.c',
+    # Version
+    vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
+            input: 'version.c.in', output: 'version.c',
+            fallback: 'release'),
+]
+
+executable_dependencies = [
+    # lua
+    dependency('lua', version: ['>= ' + lua_ver, '< ' + lua_ver_maj.to_string() + '.' + (lua_ver_min + 1).to_string()]),
+]
+
 # libendit
 libedit = dependency('libedit', version: '>= 3.1', required: get_option('libedit'))
 if libedit.found()
-    dependencies += libedit
-    sources += 'cli.c'
+    executable_dependencies += libedit
+    executable_sources += 'cli.c'
     conf.set('HAVE_LIBEDIT', 1)
     features += ', ' + libedit.name() + ' ' + libedit.version()
 endif
@@ -131,15 +146,8 @@ libtxproto = shared_library('txproto',
 # Executable
 executable('txproto',
     install: true,
-    sources: [
-        'txproto_main.c',
-        builtin_lua_scripts,
-        # Version
-        vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
-                input: 'version.c.in', output: 'version.c',
-                fallback: 'release'),
-    ],
-    dependencies: dependencies,
+    sources: executable_sources,
+    dependencies: dependencies + executable_dependencies,
     link_with: libtxproto,
 )
 

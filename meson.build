@@ -45,9 +45,6 @@ dependencies = [
     dependency('libavfilter', version: '>= 7.79.100'),
     dependency('libavutil', version: '>= 56.43.100'),
 
-    # lua
-    dependency('lua', version: ['>= ' + lua_ver, '< ' + lua_ver_maj.to_string() + '.' + (lua_ver_min + 1).to_string()]),
-
     # zlib
     dependency('zlib'),
 
