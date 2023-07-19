@@ -1,9 +1,6 @@
 # Base files
 sources = [
-    'txproto_main.c',
-
-    # Lua
-    builtin_lua_scripts,
+    # Lua,
     'lua_common.c',
     'lua_api.c',
     'lua_generic_api.c',
@@ -33,11 +30,6 @@ sources = [
     'fifo_packet.c',
     'os_compat.c',
     'ctrl_template.c',
-
-    # Version
-    vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
-                      input: 'version.c.in', output: 'version.c',
-                      fallback: 'release')
 ]
 
 # libendit
@@ -129,10 +121,26 @@ if have_wayland
     endif
 endif
 
+# Library
+libtxproto = shared_library('txproto',
+    install: true,
+    sources: sources + builtin_lua_scripts,
+    dependencies: dependencies,
+)
+
+# Executable
 executable('txproto',
     install: true,
-    sources: sources,
+    sources: [
+        'txproto_main.c',
+        builtin_lua_scripts,
+        # Version
+        vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
+                input: 'version.c.in', output: 'version.c',
+                fallback: 'release'),
+    ],
     dependencies: dependencies,
+    link_with: libtxproto,
 )
 
 summary({
