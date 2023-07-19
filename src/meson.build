@@ -26,6 +26,8 @@ sources = [
     'linking.c',
     'os_compat.c',
     'ctrl_template.c',
+
+    'txproto.c',
 ]
 
 # Executable sources
@@ -142,6 +144,16 @@ libtxproto = shared_library('txproto',
     install: true,
     sources: sources + builtin_lua_scripts,
     dependencies: dependencies,
+)
+
+install_headers('txproto.h')
+
+pkg = import('pkgconfig')
+pkg.generate(
+  name: 'txproto',
+  description: 'txproto',
+  libraries: libtxproto,
+  version: '0.1.0',
 )
 
 # Executable
