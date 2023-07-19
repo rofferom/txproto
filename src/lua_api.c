@@ -24,6 +24,7 @@
 
 #include "cli.h"
 #include "iosys_common.h"
+#include "linking.h"
 #include "muxing.h"
 #include "demuxing.h"
 #include "encoding.h"

@@ -23,6 +23,7 @@ sources = [
     'logging.c',
     'fifo_frame.c',
     'fifo_packet.c',
+    'linking.c',
     'os_compat.c',
     'ctrl_template.c',
 ]
