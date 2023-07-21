@@ -32,6 +32,7 @@ sources = [
     'os_compat.c',
     'ctrl_template.c',
     'commit.c',
+    'control.c',
 
     # Version
     vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
@@ -53,6 +54,7 @@ headers = [
     'events.h',
     'bufferlist.h',
     'commit.h',
+    'control.h',
 ]
 
 # libendit
