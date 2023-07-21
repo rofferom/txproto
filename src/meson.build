@@ -34,6 +34,7 @@ sources = [
     'epoch.c',
     'commit.c',
     'control.c',
+    'link.c',
 
     # Version
     vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
@@ -56,6 +57,7 @@ headers = [
     'bufferlist.h',
     'commit.h',
     'control.h',
+    'link.h',
 ]
 
 # libendit
