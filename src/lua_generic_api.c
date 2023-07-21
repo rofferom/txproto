@@ -24,6 +24,7 @@
 
 #include "iosys_common.h"
 
+#include <libtxproto/commit.h>
 #include <libtxproto/encode.h>
 #include <libtxproto/decode.h>
 #include <libtxproto/mux.h>
