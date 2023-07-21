@@ -31,6 +31,7 @@ sources = [
     'fifo_packet.c',
     'os_compat.c',
     'ctrl_template.c',
+    'commit.c',
 
     # Version
     vcs_tag(command: ['git', 'rev-parse', '--short', 'HEAD'],
@@ -51,6 +52,7 @@ headers = [
     'fifo_packet.h',
     'events.h',
     'bufferlist.h',
+    'commit.h',
 ]
 
 # libendit
