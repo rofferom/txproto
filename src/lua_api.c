@@ -27,6 +27,7 @@
 #include "cli.h"
 #include "iosys_common.h"
 
+#include <libtxproto/commit.h>
 #include <libtxproto/epoch.h>
 #include <libtxproto/mux.h>
 #include <libtxproto/demux.h>
