@@ -6,6 +6,7 @@
 #include <libtxproto/decode.h>
 #include <libtxproto/demux.h>
 #include <libtxproto/encode.h>
+#include <libtxproto/filter.h>
 #include <libtxproto/link.h>
 #include <libtxproto/mux.h>
 #include <libtxproto/txproto_main.h>
@@ -242,6 +243,7 @@ err:
 AVBufferRef *tx_create_muxer(
     TXMainContext *ctx,
     const char *out_url,
+    const char *out_format,
     AVDictionary *init_opts
 ) {
     int err;
@@ -249,6 +251,7 @@ AVBufferRef *tx_create_muxer(
     MuxingContext *mctx = (MuxingContext *)mctx_ref->data;
 
     mctx->out_url = out_url;
+    mctx->out_format = out_format;
 
     err = sp_muxer_init(mctx_ref);
     if (err < 0) {
@@ -273,6 +276,44 @@ err:
     return NULL;
 }
 
+AVBufferRef *tx_create_filtergraph(
+    TXMainContext *ctx,
+    const char *graph,
+    enum AVHWDeviceType hwctx_type,
+    AVDictionary *init_opts
+) {
+    int err;
+    AVBufferRef *fctx_ref = sp_filter_alloc();
+
+    const char *name = NULL;
+    AVDictionary *opts = NULL;
+    char **in_pads = NULL;
+    char **out_pads = NULL;
+
+    err = sp_init_filter_graph(fctx_ref, name, graph, in_pads, out_pads, opts, hwctx_type);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "Unable to init filter: %s!", av_err2str(err));
+        goto err;
+    }
+
+    if (init_opts) {
+        err = sp_filter_ctrl(fctx_ref, SP_EVENT_CTRL_OPTS | SP_EVENT_FLAG_IMMEDIATE, init_opts);
+        if (err < 0) {
+            sp_log(ctx, SP_LOG_ERROR, "Unable to set options: %s!\n", av_err2str(err));
+            goto err;
+        }
+    }
+    av_dict_free(&init_opts);
+
+    sp_bufferlist_append_noref(ctx->ext_buf_refs, fctx_ref);
+
+    return fctx_ref;
+
+err:
+    av_buffer_unref(&fctx_ref);
+    return NULL;
+}
+
 int tx_link(
     TXMainContext *ctx,
     AVBufferRef *src,
@@ -289,6 +330,15 @@ int tx_link(
         src_stream_id,
         NULL // src_stream_desc
     );
+}
+
+int tx_destroy(
+    TXMainContext *ctx,
+    AVBufferRef **ref
+) {
+    (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, ref);
+    av_buffer_unref(ref);
+    return 0;
 }
 
 int tx_register_event(

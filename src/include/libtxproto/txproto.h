@@ -20,6 +20,7 @@
 
 #include <libavutil/buffer.h>
 #include <libavutil/dict.h>
+#include <libavutil/hwcontext.h>
 
 typedef struct TXMainContext TXMainContext;
 
@@ -59,6 +60,14 @@ AVBufferRef *tx_create_encoder(
 AVBufferRef *tx_create_muxer(
     TXMainContext *ctx,
     const char *out_url,
+    const char *out_format,
+    AVDictionary *init_opts
+);
+
+AVBufferRef *tx_create_filtergraph(
+    TXMainContext *ctx,
+    const char *graph,
+    enum AVHWDeviceType hwctx_type,
     AVDictionary *init_opts
 );
 
@@ -67,6 +76,11 @@ int tx_link(
     AVBufferRef *src,
     AVBufferRef *dst,
     int src_stream_id
+);
+
+int tx_destroy(
+    TXMainContext *ctx,
+    AVBufferRef **ref
 );
 
 int tx_register_event(
