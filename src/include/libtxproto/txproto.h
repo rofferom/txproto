@@ -24,6 +24,8 @@
 
 typedef struct TXMainContext TXMainContext;
 
+#include <libtxproto/io.h>
+
 TXMainContext *tx_new(void);
 
 int tx_init(TXMainContext *ctx);
@@ -88,3 +90,19 @@ int tx_register_event(
     AVBufferRef *target,
     AVBufferRef *event
 );
+
+int tx_destroy_event(
+    TXMainContext *ctx,
+    AVBufferRef *event
+);
+
+AVBufferRef *tx_register_io_cb(
+    TXMainContext *ctx,
+    const char **api_list,
+    int (*source_event_cb)(IOSysEntry *entry, void *userdata),
+    void *userdata
+);
+
+AVBufferRef *tx_io_create(TXMainContext *ctx,
+                          uint32_t identifier,
+                          AVDictionary *opts);

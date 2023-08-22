@@ -336,3 +336,60 @@ int tx_register_event(
 
     return target_ctrl_fn(target, SP_EVENT_CTRL_NEW_EVENT, event);
 }
+
+typedef struct SourceEventCtx {
+    int (*cb)(IOSysEntry *entry, void *userdata);
+    void *userdata;
+} SourceEventCtx;
+
+static int source_event_cb(AVBufferRef *event, void *callback_ctx, void *ctx,
+                           void *dep_ctx, void *data)
+{
+    SourceEventCtx *source_cb_ctx = callback_ctx;
+    IOSysEntry *entry = dep_ctx;
+
+    return (*source_cb_ctx->cb)(entry, source_cb_ctx->userdata);
+}
+
+int tx_destroy_event(
+    TXMainContext *ctx,
+    AVBufferRef *event
+) {
+    (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, event);
+    sp_event_unref_expire(&event);
+
+    return 0;
+}
+
+AVBufferRef *tx_register_io_cb(
+    TXMainContext *ctx,
+    const char **api_list,
+    int (*cb)(IOSysEntry *entry, void *userdata),
+    void *userdata
+) {
+    AVBufferRef *source_event;
+    source_event = sp_io_alloc(ctx, (const char **)api_list, source_event_cb,
+                               NULL, sizeof(SourceEventCtx));
+    if (!source_event)
+        return NULL;
+
+    SourceEventCtx *source_event_ctx = av_buffer_get_opaque(source_event);
+    source_event_ctx->cb = cb;
+    source_event_ctx->userdata = userdata;
+
+    int err = sp_io_init(ctx, source_event, (const char **)api_list);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "Unable to reference %s!", "function");
+        av_buffer_unref(&source_event);
+        return NULL;
+    }
+
+    return source_event;
+}
+
+AVBufferRef *tx_io_create(TXMainContext *ctx,
+                          uint32_t identifier,
+                          AVDictionary *opts)
+{
+    return sp_io_create(ctx, identifier, opts);
+}
