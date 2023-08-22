@@ -60,6 +60,7 @@ headers = [
     'commit.h',
     'control.h',
     'link.h',
+    'utils.h',
     'txproto.h',
 ]
 
