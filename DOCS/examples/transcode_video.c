@@ -14,6 +14,7 @@
 
 struct EosEvent {
     pthread_cond_t *cond;
+    int eos;
 };
 
 static int muxer_eos_cb(AVBufferRef *event_ref, void *callback_ctx, void *ctx,
@@ -22,6 +23,8 @@ static int muxer_eos_cb(AVBufferRef *event_ref, void *callback_ctx, void *ctx,
     struct EosEvent *event = callback_ctx;
 
     printf("End of stream!\n");
+    event->eos = 1;
+
     int err = pthread_cond_signal(event->cond);
     assert(err == 0);
 
@@ -109,6 +112,7 @@ int main(int argc, char *argv[])
 
     struct EosEvent *eos_event = av_buffer_get_opaque(muxer_eof_event);
     eos_event->cond = &cond;
+    eos_event->eos = 0;
 
     err = tx_register_event(ctx, muxer, muxer_eof_event);
     assert(err == 0);
@@ -120,8 +124,12 @@ int main(int argc, char *argv[])
     // Wait for EOS
     err = pthread_mutex_lock(&mtx);
     assert(err == 0);
-    err = pthread_cond_wait(&cond, &mtx);
-    assert(err == 0);
+
+    while (!eos_event->eos) {
+        err = pthread_cond_wait(&cond, &mtx);
+        assert(err == 0);
+    }
+
     err = pthread_mutex_unlock(&mtx);
     assert(err == 0);
 
