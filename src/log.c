@@ -88,6 +88,9 @@ struct SPLogState {
     FILE *log_file;
     SPComponentLogLevel *log_levels;
     int num_log_levels;
+
+    sp_log_log_cb log_cb;
+    void *log_cb_userdata;
 } static log_ctx = {
     .term_lock = PTHREAD_MUTEX_INITIALIZER,
     .file_lock = PTHREAD_MUTEX_INITIALIZER,
@@ -423,6 +426,13 @@ static void main_log(SPClass *class, enum SPLogLevel lvl, const char *format,
     if (!class) {
         class = &log_ctx.null_class;
         no_class = 1;
+    }
+
+    if (log_ctx.log_cb && print_line) {
+        (*log_ctx.log_cb)(class->name, lvl, format, args, log_ctx.log_cb_userdata);
+
+        pthread_mutex_unlock(&log_ctx.ctx_lock);
+        return;
     }
 
     if (!print_line && !log_line) {
@@ -872,6 +882,16 @@ int sp_log_set_file(const char *path)
     pthread_mutex_unlock(&log_ctx.ctx_lock);
 
     return ret;
+}
+
+void sp_log_set_log_cb(sp_log_log_cb cb, void *userdata)
+{
+    pthread_mutex_lock(&log_ctx.ctx_lock);
+
+    log_ctx.log_cb = cb;
+    log_ctx.log_cb_userdata = userdata;
+
+    pthread_mutex_unlock(&log_ctx.ctx_lock);
 }
 
 void sp_log_set_prompt_callback(void *ctx, void (*cb)(void *ctx, int newline_started))

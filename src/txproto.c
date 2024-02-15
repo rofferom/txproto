@@ -69,6 +69,16 @@ void tx_free(TXMainContext *ctx)
     av_free(ctx);
 }
 
+void tx_set_log_cb(tx_log_cb log_cb, void *userdata)
+{
+    sp_log_set_log_cb(log_cb, userdata);
+}
+
+int tx_log_set_ctx_lvl_str(const char *component, const char *lvl)
+{
+    return sp_log_set_ctx_lvl_str(component, lvl);
+}
+
 int tx_epoch_set(TXMainContext *ctx, int64_t value)
 {
     AVBufferRef *epoch_event = sp_epoch_event_new(ctx);
