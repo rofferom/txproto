@@ -115,6 +115,12 @@ void sp_log(void *ctx, enum SPLogLevel level, const char *fmt, ...) sp_printf_fo
 /* Set log file */
 int sp_log_set_file(const char *path);
 
+/* Callback log */
+typedef void (*sp_log_log_cb)(const char *component, int level, const char *fmt,
+                              va_list args, void *userdata);
+
+void sp_log_set_log_cb(sp_log_log_cb cb, void *userdata);
+
 /* Enable/disable timestamp/component printing */
 void sp_log_print_ts(int enable);
 

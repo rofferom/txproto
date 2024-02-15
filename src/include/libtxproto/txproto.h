@@ -33,6 +33,13 @@ int tx_init(TXMainContext *ctx);
 
 void tx_free(TXMainContext *ctx);
 
+typedef void (*tx_log_cb)(const char *component, int level, const char *fmt,
+                          va_list args, void *userdata);
+
+int tx_log_set_ctx_lvl_str(const char *component, const char *lvl);
+
+void tx_set_log_cb(tx_log_cb log_cb, void *userdata);
+
 int tx_epoch_set(TXMainContext *ctx, int64_t value);
 
 int tx_commit(TXMainContext *ctx);
