@@ -100,7 +100,6 @@ int tx_epoch_set(TXMainContext *ctx, int64_t value)
         goto err;
     }
 
-    sp_log(ctx, SP_LOG_ERROR, "Unable to set epoch offset: %s!", av_err2str(err));
     err = sp_eventlist_add(ctx, ctx->events, epoch_event, 0);
     if (err < 0)
         goto err;
