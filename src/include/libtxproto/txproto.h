@@ -62,7 +62,7 @@ AVBufferRef *tx_encoder_create(
     TXMainContext *ctx,
     const char *enc_name,
     const char *name,
-    AVDictionary **options,
+    AVDictionary *options,
     AVDictionary *init_opts
 );
 
