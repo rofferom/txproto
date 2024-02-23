@@ -30,6 +30,7 @@
 #include <libtxproto/utils.h>
 #include "ctrl_template.h"
 #include "utils.h"
+#include "os_compat.h"
 #include "../config.h"
 
 const IOSysAPI src_xcb;

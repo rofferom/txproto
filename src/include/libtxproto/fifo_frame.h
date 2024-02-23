@@ -21,8 +21,6 @@
 #include <assert.h>
 #include <libavutil/frame.h>
 
-#include "os_compat.h"
-
 enum SPFrameFIFOFlags {
     FRAME_FIFO_BLOCK_MAX_OUTPUT = (1 << 0),
     FRAME_FIFO_BLOCK_NO_INPUT   = (1 << 1),
