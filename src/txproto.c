@@ -219,6 +219,7 @@ AVBufferRef *tx_encoder_create(
     }
 
     ectx->codec_config = options->options;
+    ectx->pix_fmt = options->pix_fmt;
 
     if (options->init_opts) {
         err = sp_encoder_ctrl(ectx_ref, SP_EVENT_CTRL_OPTS | SP_EVENT_FLAG_IMMEDIATE, options->init_opts);

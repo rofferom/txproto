@@ -63,7 +63,11 @@ typedef struct TxEncoderOptions {
     const char *name;
     AVDictionary *options;
     AVDictionary *init_opts;
+
+    /* Video options only */
+    enum AVPixelFormat pix_fmt;
 } TxEncoderOptions;
+
 AVBufferRef *tx_encoder_create(
     TXMainContext *ctx,
     const TxEncoderOptions *options
