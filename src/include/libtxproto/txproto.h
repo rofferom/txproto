@@ -70,6 +70,7 @@ AVBufferRef *tx_muxer_create(
     TXMainContext *ctx,
     const char *out_url,
     const char *out_format,
+    AVDictionary *options,
     AVDictionary *init_opts
 );
 

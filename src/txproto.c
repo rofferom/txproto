@@ -244,6 +244,7 @@ AVBufferRef *tx_muxer_create(
     TXMainContext *ctx,
     const char *out_url,
     const char *out_format,
+    AVDictionary *options,
     AVDictionary *init_opts
 ) {
     int err;
@@ -257,6 +258,14 @@ AVBufferRef *tx_muxer_create(
     if (err < 0) {
         sp_log(ctx, SP_LOG_ERROR, "Unable to init muxer: %s!", av_err2str(err));
         goto err;
+    }
+
+    if (options) {
+        err = sp_set_avopts(mctx, mctx->avf, options);
+        if (err < 0) {
+            sp_log(ctx, SP_LOG_ERROR, "Unable to configure muxer: %s!", av_err2str(err));
+            goto err;
+        }
     }
 
     if (init_opts) {
