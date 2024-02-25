@@ -198,22 +198,19 @@ err:
 
 AVBufferRef *tx_encoder_create(
     TXMainContext *ctx,
-    const char *enc_name,
-    const char *name,
-    AVDictionary *options,
-    AVDictionary *init_opts
+    const TxEncoderOptions *options
 ) {
     int err;
     AVBufferRef *ectx_ref = sp_encoder_alloc();
     EncodingContext *ectx = (EncodingContext *)ectx_ref->data;
 
-    ectx->codec = avcodec_find_encoder_by_name(enc_name);
+    ectx->codec = avcodec_find_encoder_by_name(options->enc_name);
     if (!ectx->codec) {
-        sp_log(ctx, SP_LOG_ERROR, "Encoder \"%s\" not found!", enc_name);
+        sp_log(ctx, SP_LOG_ERROR, "Encoder \"%s\" not found!", options->enc_name);
         goto err;
     }
 
-    ectx->name = name;
+    ectx->name = options->name;
 
     err = sp_encoder_init(ectx_ref);
     if (err < 0) {
@@ -221,10 +218,10 @@ AVBufferRef *tx_encoder_create(
         goto err;
     }
 
-    ectx->codec_config = options;
+    ectx->codec_config = options->options;
 
-    if (init_opts) {
-        err = sp_encoder_ctrl(ectx_ref, SP_EVENT_CTRL_OPTS | SP_EVENT_FLAG_IMMEDIATE, init_opts);
+    if (options->init_opts) {
+        err = sp_encoder_ctrl(ectx_ref, SP_EVENT_CTRL_OPTS | SP_EVENT_FLAG_IMMEDIATE, options->init_opts);
         if (err < 0) {
             sp_log(ctx, SP_LOG_ERROR, "Unable to set options: %s!", av_err2str(err));
             goto err;
