@@ -12,6 +12,7 @@
 #include <libtxproto/mux.h>
 #include <libtxproto/txproto_main.h>
 #include <libtxproto/txproto.h>
+#include "iosys_common.h"
 #include "packet_sink.h"
 
 #include "net.h"
@@ -67,6 +68,14 @@ void tx_free(TXMainContext *ctx)
 
     /* Free all contexts */
     sp_bufferlist_free(&ctx->ext_buf_refs);
+
+    /* Shut the I/O APIs off */
+    if (ctx->io_api_ctx) {
+        for (int i = 0; i < sp_compiled_apis_len; i++)
+            if (ctx->io_api_ctx[i])
+                av_buffer_unref(&ctx->io_api_ctx[i]);
+        av_free(ctx->io_api_ctx);
+    }
 
     /* Stop logging */
     sp_log_uninit();
