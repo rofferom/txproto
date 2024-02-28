@@ -795,6 +795,11 @@ static int pulse_ctrl(AVBufferRef *ctx_ref, SPEventType ctrl, void *arg)
                 if (def)
                     entry->is_default = !strcmp(name, def);
 
+                const int MONITOR_SUFFIX_LEN = 8;
+                if (name_len > MONITOR_SUFFIX_LEN &&
+                    !strcmp(name + name_len - MONITOR_SUFFIX_LEN, ".monitor"))
+                    entry->type = SP_IO_TYPE_AUDIO_MONITOR;
+
                 if (!entry->is_default && def_sink &&
                     !strncmp(def_sink, name, def_sink_len) &&
                     name_len == (def_sink_len + strlen(".monitor")) &&
