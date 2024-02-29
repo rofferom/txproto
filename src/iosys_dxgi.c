@@ -697,9 +697,9 @@ static void *dxgi_capture_thread(void *s)
         goto fail;
     }
 
-    if (sp_dxgi_cursor_handler_init(&priv->cursor_sink) < 0) {
+    err = sp_dxgi_cursor_handler_init(&priv->cursor_sink) < 0;
+    if (err < 0)
         goto fail;
-    }
 
     while (!atomic_load(&priv->quit)) {
         /* Capture may be restarted multiple time during a session in some cases:
@@ -878,6 +878,10 @@ fail:
     }
 
     priv->err = err;
+
+    if (err < 0)
+        sp_eventlist_dispatch(entry, entry->events, SP_EVENT_ON_ERROR, NULL);
+
     return NULL;
 }
 
