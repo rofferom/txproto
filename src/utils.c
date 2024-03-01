@@ -765,6 +765,13 @@ int sp_eventlist_dispatch(void *ctx, SPBufferList *list, SPEventType type, void 
 
         ret = event->cb(event_ref, av_buffer_get_opaque(event_ref),
                         event->ctx, event->dep_ctx ? event->dep_ctx : ctx, data);
+        if (type & SP_EVENT_ON_COMMIT && ret < 0) {
+            av_free(fstr);
+            pthread_mutex_unlock(event->lock);
+            pthread_mutex_unlock(&list->lock);
+
+            return ret;
+        }
 
         /* Signal any events with no dependencies right after completing them */
         if (!(event->type & SP_EVENT_FLAG_DEPENDENCY) &&
