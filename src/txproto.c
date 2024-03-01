@@ -120,9 +120,7 @@ err:
 
 int tx_commit(TXMainContext *ctx)
 {
-    sp_eventlist_dispatch(ctx, ctx->events, SP_EVENT_ON_COMMIT, NULL);
-
-    return 0;
+    return sp_eventlist_dispatch(ctx, ctx->events, SP_EVENT_ON_COMMIT, NULL);
 }
 
 AVBufferRef *tx_demuxer_create(
