@@ -20,6 +20,7 @@
 
 #include <pthread.h>
 
+#include <libavutil/error.h>
 #include <libavutil/mem.h>
 
 #include <libtxproto/fifo_bufferref.h>
