@@ -32,15 +32,13 @@ int tx_init(TXMainContext *ctx)
         return err;
     }
 
-    //sp_log_set_ctx_lvl_str("global", "trace");
-
     /* Print timestamps in logs */
     sp_log_print_ts(1);
 
     ctx->events = sp_bufferlist_new();
     ctx->ext_buf_refs = sp_bufferlist_new();
     ctx->epoch_value = ATOMIC_VAR_INIT(0);
-    ctx->source_update_cb_ref = -2; /* R2 HACK */
+    ctx->source_update_cb_ref = LUA_NOREF;
 
     return 0;
 }
