@@ -28,6 +28,7 @@
 #include <libtxproto/utils.h>
 #include <libtxproto/log.h>
 #include "ctrl_template.h"
+#include "os_compat.h"
 
 #include "../config.h"
 
