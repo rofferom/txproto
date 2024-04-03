@@ -312,6 +312,9 @@ static void *xcb_thread(void *s)
     err = AVERROR(EOF);
 
 end:
+    if (err < 0)
+        sp_eventlist_dispatch(entry, entry->events, SP_EVENT_ON_ERROR, NULL);
+
     sp_event_send_eos_frame(entry, entry->events, entry->frames, err);
     priv->err = err;
     return NULL;
