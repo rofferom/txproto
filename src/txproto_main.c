@@ -352,10 +352,13 @@ int main(int argc, char *argv[])
 
         sp_lua_unlock_interface(lctx, 0);
         sp_lua_close_ctx(&lctx);
-    } else {
-        while (1)
-            av_usleep(UINT_MAX);
     }
+
+    /* We weren't told to exit or anything, so...
+     * In the future, maybe we should put an event loop here to process
+     * periodic events */
+    while (1)
+        av_usleep(UINT_MAX);
 
 end:
     av_freep(&lua_libs_list);
