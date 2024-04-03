@@ -54,12 +54,15 @@ AVBufferRef *tx_decoder_create(
     AVDictionary *init_opts
 );
 
+typedef struct TxEncoderOptions {
+    const char *enc_name;
+    const char *name;
+    AVDictionary *options;
+    AVDictionary *init_opts;
+} TxEncoderOptions;
 AVBufferRef *tx_encoder_create(
     TXMainContext *ctx,
-    const char *enc_name,
-    const char *name,
-    AVDictionary *options,
-    AVDictionary *init_opts
+    const TxEncoderOptions *options
 );
 
 AVBufferRef *tx_muxer_create(
