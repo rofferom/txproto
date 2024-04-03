@@ -180,7 +180,7 @@ AVBufferRef *tx_encoder_create(
     TXMainContext *ctx,
     const char *enc_name,
     const char *name,
-    AVDictionary **options,
+    AVDictionary *options,
     AVDictionary *init_opts
 ) {
     int err;
@@ -201,8 +201,7 @@ AVBufferRef *tx_encoder_create(
         goto err;
     }
 
-    err = av_opt_set_dict(ectx->avctx, options);
-    assert(err == 0);
+    ectx->codec_config = options;
 
     if (init_opts) {
         err = sp_encoder_ctrl(ectx_ref, SP_EVENT_CTRL_OPTS | SP_EVENT_FLAG_IMMEDIATE, init_opts);
