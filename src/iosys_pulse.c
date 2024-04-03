@@ -293,6 +293,7 @@ static void stream_status_cb(pa_stream *stream, void *data)
     case PA_STREAM_FAILED: /* Unclean termination */
         sp_log(iosys_entry, SP_LOG_ERROR, "Capture stream failed: %s!\n",
                pa_strerror(pa_context_errno(priv->main->pa_context)));
+        sp_eventlist_dispatch(iosys_entry, iosys_entry->events, SP_EVENT_ON_ERROR, NULL);
         return;
     default:
         sp_log(iosys_entry, SP_LOG_DEBUG, "Unhandled stream state %i\n", state);
