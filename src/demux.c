@@ -24,6 +24,7 @@
 #include <libtxproto/utils.h>
 #include "utils.h"
 #include "ctrl_template.h"
+#include "os_compat.h"
 
 static void *demuxing_thread(void *arg)
 {

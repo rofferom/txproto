@@ -25,6 +25,7 @@
 
 #include "utils.h"
 #include "ctrl_template.h"
+#include "os_compat.h"
 
 int sp_decoding_connect(DecodingContext *dec, DemuxingContext *mux,
                         int stream_id, char *stream_desc)

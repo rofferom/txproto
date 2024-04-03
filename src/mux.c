@@ -24,6 +24,7 @@
 #include <libtxproto/utils.h>
 #include "utils.h"
 #include "ctrl_template.h"
+#include "os_compat.h"
 
 typedef struct MuxEncoderMap {
     intptr_t encoder_id;
