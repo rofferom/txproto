@@ -740,6 +740,9 @@ fail:
     av_packet_free(&out_pkt);
     ctx->err = ret;
 
+    if (ret < 0)
+        sp_eventlist_dispatch(ctx, ctx->events, SP_EVENT_ON_ERROR, NULL);
+
     sp_event_send_eos_packet(ctx, ctx->events, ctx->dst_packets, ret);
 
     atomic_store(&ctx->running, 0);
