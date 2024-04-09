@@ -112,6 +112,7 @@ typedef struct DxgiCapture {
 
     int64_t epoch;
 
+    int got_first_frame;
     int dropped_frames;
 } DxgiCapture;
 
@@ -629,6 +630,8 @@ static int start_capture(DxgiCapture *priv, DxgiCtx *ctx, IDXGIOutput1 *dxgi_out
     sp_log(priv, SP_LOG_INFO, "Duplication started. Resolution: %dx%d\n",
            desc.ModeDesc.Width, desc.ModeDesc.Height);
 
+    priv->got_first_frame = 0;
+
     return 0;
 
 fail:
@@ -738,6 +741,11 @@ static void *dxgi_capture_thread(void *s)
             sp_log(entry, SP_LOG_WARN, "AcquireNextFrame() failed: %lX\n", hr);
             err = AVERROR_EXTERNAL;
             goto fail;
+        }
+
+        if (!priv->got_first_frame) {
+            sp_log(entry, SP_LOG_INFO, "First frame acquired\n");
+            priv->got_first_frame = 1;
         }
 
         /* Copy cursor */
