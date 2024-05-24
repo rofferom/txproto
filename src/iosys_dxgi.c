@@ -705,7 +705,7 @@ static void *dxgi_capture_thread(void *s)
         goto fail;
     }
 
-    err = sp_dxgi_cursor_handler_init(&priv->cursor_sink) < 0;
+    err = sp_dxgi_cursor_handler_init(&priv->cursor_sink, entry->identifier) < 0;
     if (err < 0)
         goto fail;
 
