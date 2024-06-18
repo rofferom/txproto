@@ -61,6 +61,7 @@ typedef struct EncodingContext {
     int sample_rate;
     enum AVSampleFormat sample_fmt;
     uint64_t channel_layout;
+    uint16_t frame_size;
 
     /* Internals below */
     pthread_t encoding_thread;
