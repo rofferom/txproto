@@ -581,6 +581,8 @@ static int lua_create_demuxer(lua_State *L)
     if (err < 0)
         LUA_ERROR("Unable to init demuxer: %s!", av_err2str(err));
 
+    GET_OPTS_CLASS(mctx->avf, "options");
+
     AVDictionary *init_opts = NULL;
     GET_OPTS_DICT(init_opts, "priv_options");
     if (init_opts) {
