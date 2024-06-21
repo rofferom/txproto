@@ -35,7 +35,7 @@ static void *demuxing_thread(void *arg)
 
     sp_eventlist_dispatch(ctx, ctx->events, SP_EVENT_ON_CONFIG | SP_EVENT_ON_INIT, NULL);
 
-    sp_log(ctx, SP_LOG_VERBOSE, "Muxer initialized!\n");
+    sp_log(ctx, SP_LOG_VERBOSE, "Demuxer initialized!\n");
 
     while (1) {
         AVPacket *out_packet = av_packet_alloc();
