@@ -865,7 +865,7 @@ int sp_log_set_file(const char *path)
         fclose(log_ctx.log_file);
     }
 
-    log_ctx.log_file = av_fopen_utf8(path, "w");
+    log_ctx.log_file = fopen(path, "w");
     if (!log_ctx.log_file)
         ret = AVERROR(errno);
 

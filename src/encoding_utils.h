@@ -117,24 +117,24 @@ static int pick_codec_sample_rate(const AVCodec *codec, int irate)
     return ret;
 }
 
-static const uint64_t pick_codec_channel_layout(const AVCodec *codec,
-                                                uint64_t ilayout)
+static const AVChannelLayout pick_codec_channel_layout(const AVCodec *codec,
+                                                       AVChannelLayout ilayout)
 {
     int i = 0;
     int max_channels = 0;
-    int in_channels = av_get_channel_layout_nb_channels(ilayout);
-    uint64_t best_layout = 0;
+    int in_channels = ilayout.nb_channels;
+    AVChannelLayout best_layout = { 0 };
 
     /* Supports anything */
-    if (!codec->channel_layouts)
+    if (!codec->ch_layouts)
         return ilayout;
 
     /* Try to match */
     while (1) {
-        if (!codec->channel_layouts[i])
+        if (!codec->ch_layouts[i].nb_channels)
             break;
-        if (codec->channel_layouts[i] == ilayout)
-            return codec->channel_layouts[i];
+        if (!av_channel_layout_compare(&codec->ch_layouts[i], &ilayout))
+            return codec->ch_layouts[i];
         i++;
     }
 
@@ -142,15 +142,15 @@ static const uint64_t pick_codec_channel_layout(const AVCodec *codec,
 
     /* Try to match channel counts */
     while (1) {
-        if (!codec->channel_layouts[i])
+        if (!codec->ch_layouts[i].nb_channels)
             break;
-        int num = av_get_channel_layout_nb_channels(codec->channel_layouts[i]);
+        int num = codec->ch_layouts[i].nb_channels;
         if (num > max_channels) {
             max_channels = num;
-            best_layout = codec->channel_layouts[i];
+            best_layout = codec->ch_layouts[i];
         }
         if (num >= in_channels)
-            return codec->channel_layouts[i];
+            return codec->ch_layouts[i];
         i++;
     }
 

@@ -82,7 +82,7 @@ typedef struct PulsePriv {
     /* Info */
     int sample_rate;
     enum AVSampleFormat sample_fmt;
-    uint64_t channel_layout;
+    AVChannelLayout channel_layout;
     int bits_per_sample;
     AVRational time_base;
 } PulsePriv;
@@ -120,7 +120,7 @@ static const struct {
     [PA_SAMPLE_FLOAT32NE] = { AV_SAMPLE_FMT_FLT, 32 },
 };
 
-static const uint64_t pa_to_lavu_ch_map(const pa_channel_map *ch_map)
+static const AVChannelLayout pa_to_lavu_ch_map(const pa_channel_map *ch_map)
 {
     static const uint64_t channel_map[PA_CHANNEL_POSITION_MAX] = {
         [PA_CHANNEL_POSITION_FRONT_LEFT]            = AV_CH_FRONT_LEFT,
@@ -143,19 +143,22 @@ static const uint64_t pa_to_lavu_ch_map(const pa_channel_map *ch_map)
         [PA_CHANNEL_POSITION_TOP_REAR_CENTER]       = AV_CH_TOP_BACK_CENTER,
     };
 
-    uint64_t map = 0;
+    AVChannelLayout out = { 0 };
+    av_channel_layout_custom_init(&out, ch_map->channels);
+
     for (int i = 0; i < ch_map->channels; i++)
-        map |= channel_map[ch_map->map[i]];
+        out.u.map[i].id = channel_map[ch_map->map[i]];
 
-    if (!map)
-        map = av_get_default_channel_layout(ch_map->channels);
+    av_channel_layout_retype(&out, AV_CHANNEL_ORDER_NATIVE,
+                             AV_CHANNEL_LAYOUT_RETYPE_FLAG_CANONICAL);
 
-    return map;
+    return out;
 }
 
 static int frame_get_pool_buffer(PulsePriv *priv, AVFrame *f)
 {
-    int ret = av_samples_get_buffer_size(&f->linesize[0], f->channels,
+    int ret = av_samples_get_buffer_size(&f->linesize[0],
+                                         f->ch_layout.nb_channels,
                                          f->nb_samples, f->format, 0);
     if (ret < 0)
         return ret;
@@ -200,9 +203,8 @@ static void stream_read_cb(pa_stream *stream, size_t size, void *data)
     AVFrame *f          = av_frame_alloc();
     f->sample_rate      = ss->rate;
     f->format           = format_map[ss->format].av_format;
-    f->channel_layout   = pa_to_lavu_ch_map(ch_map);
-    f->channels         = ss->channels;
-    f->nb_samples       = (size / av_get_bytes_per_sample(f->format)) / f->channels;
+    f->ch_layout        = pa_to_lavu_ch_map(ch_map);
+    f->nb_samples       = (size / av_get_bytes_per_sample(f->format)) / f->ch_layout.nb_channels;
     f->opaque_ref       = av_buffer_allocz(sizeof(FormatExtraData));
 
     FormatExtraData *fe = (FormatExtraData *)f->opaque_ref->data;
@@ -229,7 +231,7 @@ static void stream_read_cb(pa_stream *stream, size_t size, void *data)
             memcpy(f->data[0], buffer, size);
         }
     } else { /* There's a hole */
-        av_samples_set_silence(f->data, 0, f->nb_samples, f->channels, f->format);
+        av_samples_set_silence(f->data, 0, f->nb_samples, f->ch_layout.nb_channels, f->format);
     }
 
     if (!priv->delay)
@@ -280,7 +282,10 @@ static void stream_status_cb(pa_stream *stream, void *data)
     case PA_STREAM_READY:
         ss = pa_stream_get_sample_spec(stream);
         ch_map = pa_stream_get_channel_map(stream);
-        av_get_channel_layout_string(map_str, sizeof(map_str), ss->channels, pa_to_lavu_ch_map(ch_map));
+        AVChannelLayout lout = pa_to_lavu_ch_map(ch_map);
+        av_channel_layout_describe(&lout, map_str, sizeof(map_str));
+        av_channel_layout_uninit(&lout);
+
         sp_log(iosys_entry, SP_LOG_VERBOSE, "Stream ready, format: %iHz %s %ich %s\n",
                ss->rate, map_str, ss->channels, av_get_sample_fmt_name(format_map[ss->format].av_format));
         pa_threaded_mainloop_signal(priv->main->pa_mainloop, 0);
@@ -369,14 +374,11 @@ static int pulse_init_io(AVBufferRef *ctx_ref, AVBufferRef *entry, AVDictionary 
         goto fail;
     }
 
-    /* Check for crazy layouts */
-    uint64_t lavu_ch_map = pa_to_lavu_ch_map(&req_map);
-    if (av_get_default_channel_layout(req_map.channels) != lavu_ch_map) {
-        if (req_map.channels == 1)
-            pa_channel_map_init_mono(&req_map);
-        else
-            pa_channel_map_init_stereo(&req_map);
-    }
+    /* Check for crazy layouts, TODO: FIXME */
+    if (req_map.channels == 1)
+        pa_channel_map_init_mono(&req_map);
+    else
+        pa_channel_map_init_stereo(&req_map);
 
     priv->stream = pa_stream_new(ctx->pa_context, PROJECT_NAME, &req_ss, &req_map);
     if (!priv->stream) {
@@ -606,7 +608,7 @@ static void destroy_entry(void *opaque, uint8_t *data)
     sp_class_set_name(entry, info->name);                                               \
     entry->sample_rate = priv->ss.rate;                                                 \
     entry->channels = priv->ss.channels;                                                \
-    entry->channel_layout = pa_to_lavu_ch_map(&priv->map);                              \
+    entry->ch_layout = pa_to_lavu_ch_map(&priv->map);                                   \
     entry->sample_fmt = format_map[pulse_remap_to_useful[priv->ss.format]].av_format;   \
     entry->volume = pa_sw_volume_to_linear(info->volume.values[0]);
 

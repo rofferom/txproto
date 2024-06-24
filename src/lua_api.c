@@ -663,11 +663,13 @@ static int lua_create_encoder(lua_State *L)
     }
 
     temp_str = NULL;
-    GET_OPT_STR(temp_str, "channel_layout");
+    GET_OPT_STR(temp_str, "ch_layout");
     if (temp_str) {
-        ectx->channel_layout = av_get_channel_layout(temp_str);
-        if (!ectx->sample_fmt)
+        err = av_channel_layout_from_string(&ectx->ch_layout, temp_str);
+        if (err < 0)
             LUA_ERROR("Invalid channel layout \"%s\"!", temp_str);
+
+        ectx->ch_layout_present = 1;
     }
 
     AVDictionary *init_opts = NULL;
@@ -1187,8 +1189,7 @@ static int source_event_cb(AVBufferRef *event, void *callback_ctx, void *ctx,
         lua_newtable(L);
 
         char map_str[256];
-        av_get_channel_layout_string(map_str, sizeof(map_str),
-                                     entry->channels, entry->channel_layout);
+        av_channel_layout_describe(&entry->ch_layout, map_str, sizeof(map_str));
 
         SET_OPT_STR(map_str, "channel_layout");
         SET_OPT_INT(entry->channels, "channels");

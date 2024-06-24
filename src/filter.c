@@ -421,7 +421,7 @@ static int init_pads(FilterContext *ctx)
         char *filter_name = NULL;
         if (pad->type == AVMEDIA_TYPE_AUDIO) {
             params->sample_rate = in_fmt->sample_rate;
-            params->channel_layout = in_fmt->channel_layout;
+            params->ch_layout = in_fmt->ch_layout;
             filter_name = "abuffer";
         } else if (pad->type == AVMEDIA_TYPE_VIDEO) {
             params->width = in_fmt->width;

@@ -61,7 +61,7 @@ static void *muxing_thread(void *arg)
         if (err < 0) {
             sp_log(ctx, SP_LOG_WARN, "Unable to create an SDP: %s!\n", av_err2str(err));
         } else {
-            FILE *sdp_file = av_fopen_utf8(ctx->dump_sdp_file, "w");
+            FILE *sdp_file = fopen(ctx->dump_sdp_file, "w");
             if (!sdp_file) {
                 sp_log(ctx, SP_LOG_WARN, "Unable to open SDP file for writing: %s!\n",
                 av_err2str(AVERROR(errno)));

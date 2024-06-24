@@ -435,7 +435,7 @@ static int sp_lua_write_internal(TXLuaContext *s, const char *path,
             lw.is_compressed = !strcmp(&path[path_len - 3], ".gz");
 
         lw.out.path = path;
-        lw.out.file = av_fopen_utf8(path, "w+");
+        lw.out.file = fopen(path, "w+");
         if (!lw.out.file) {
             sp_log(s, SP_LOG_ERROR, "File \"%s\" not found!\n", path);
             ret = AVERROR(EINVAL);
@@ -686,7 +686,7 @@ int sp_lua_load_file(TXLuaContext *lctx, const char *script_name)
     lr.lctx = lctx;
     lr.in.path = script_name;
 
-    lr.in.file = av_fopen_utf8(script_name, "r");
+    lr.in.file = fopen(script_name, "r");
     if (!lr.in.file) {
         sp_log(lctx, SP_LOG_ERROR, "File \"%s\" not found!\n", script_name);
         return AVERROR(EINVAL);

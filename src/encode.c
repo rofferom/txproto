@@ -36,16 +36,16 @@ static int swr_configure(EncodingContext *ctx, AVFrame *conf)
         return 0;
 
     if (ctx->swr_configured_rate   == conf->sample_rate    &&
-        ctx->swr_configured_layout == conf->channel_layout &&
+        !av_channel_layout_compare(&ctx->swr_configured_layout, &conf->ch_layout) &&
         ctx->swr_configured_format == conf->format)
         return 0;
 
     av_opt_set_int           (ctx->swr, "in_sample_rate",     conf->sample_rate,              0);
-    av_opt_set_channel_layout(ctx->swr, "in_channel_layout",  conf->channel_layout,           0);
+    av_opt_set_chlayout      (ctx->swr, "in_chlayout",        &conf->ch_layout,               0);
     av_opt_set_sample_fmt    (ctx->swr, "in_sample_fmt",      conf->format,                   0);
 
     av_opt_set_int           (ctx->swr, "out_sample_rate",    ctx->avctx->sample_rate,        0);
-    av_opt_set_channel_layout(ctx->swr, "out_channel_layout", ctx->avctx->channel_layout,     0);
+    av_opt_set_chlayout      (ctx->swr, "out_chlayout",       &ctx->avctx->ch_layout,         0);
     av_opt_set_sample_fmt    (ctx->swr, "out_sample_fmt",     ctx->avctx->sample_fmt,         0);
 
     av_opt_set_int(ctx->swr, "output_sample_bits", ctx->avctx->bits_per_raw_sample, 0);
@@ -58,7 +58,7 @@ static int swr_configure(EncodingContext *ctx, AVFrame *conf)
     }
 
     ctx->swr_configured_rate = conf->sample_rate;
-    ctx->swr_configured_layout = conf->channel_layout;
+    ctx->swr_configured_layout = conf->ch_layout;
     ctx->swr_configured_format = conf->format;
 
     return 0;
@@ -131,12 +131,10 @@ static int init_avctx(EncodingContext *ctx, AVFrame *conf)
                                                     fe->bits_per_sample);
         }
 
-        if (ctx->channel_layout)
-            ctx->avctx->channel_layout = pick_codec_channel_layout(ctx->codec, ctx->channel_layout);
+        if (ctx->ch_layout_present)
+            ctx->avctx->ch_layout = pick_codec_channel_layout(ctx->codec, ctx->ch_layout);
         else
-            ctx->avctx->channel_layout = pick_codec_channel_layout(ctx->codec, conf->channel_layout);
-
-        ctx->avctx->channels = av_get_channel_layout_nb_channels(ctx->avctx->channel_layout);
+            ctx->avctx->ch_layout = pick_codec_channel_layout(ctx->codec, conf->ch_layout);
     }
 
     if (ctx->need_global_header)
@@ -340,7 +338,7 @@ static int audio_process_frame(EncodingContext *ctx, AVFrame **input, int flush)
     }
 
     out_frame->format                = ctx->avctx->sample_fmt;
-    out_frame->channel_layout        = ctx->avctx->channel_layout;
+    out_frame->ch_layout             = ctx->avctx->ch_layout;
     out_frame->sample_rate           = ctx->avctx->sample_rate;
     out_frame->pts                   = resampled_frame_pts;
 

@@ -63,7 +63,7 @@ typedef struct IOSysEntry {
     int sample_rate;
     int sample_fmt;
     int channels;
-    uint64_t channel_layout;
+    AVChannelLayout ch_layout;
     float volume;
 
     /* Input/output FIFO */

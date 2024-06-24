@@ -60,7 +60,8 @@ typedef struct EncodingContext {
     /* Audio options only */
     int sample_rate;
     enum AVSampleFormat sample_fmt;
-    uint64_t channel_layout;
+    AVChannelLayout ch_layout;
+    bool ch_layout_present;
 
     /* Internals below */
     pthread_t encoding_thread;
@@ -72,7 +73,7 @@ typedef struct EncodingContext {
     /* Audio */
     SwrContext *swr;
     int swr_configured_rate;
-    uint64_t swr_configured_layout;
+    AVChannelLayout swr_configured_layout;
     int swr_configured_format;
 
     /* Reconfiguration */
