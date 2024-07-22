@@ -84,6 +84,7 @@ if have_interface
     dependencies += vulkan
     sources += 'interface.c'
     sources += 'interface_common.c'
+    sources += 'pl.c'
     conf.set('HAVE_INTERFACE', 1)
 endif
 
