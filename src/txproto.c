@@ -271,6 +271,7 @@ err:
 
 AVBufferRef *tx_filtergraph_create(
     TXMainContext *ctx,
+    const char *name,
     const char *graph,
     enum AVHWDeviceType hwctx_type,
     AVDictionary *init_opts
@@ -278,7 +279,6 @@ AVBufferRef *tx_filtergraph_create(
     int err;
     AVBufferRef *fctx_ref = sp_filter_alloc();
 
-    const char *name = NULL;
     AVDictionary *opts = NULL;
     char **in_pads = NULL;
     char **out_pads = NULL;

@@ -69,6 +69,7 @@ AVBufferRef *tx_muxer_create(
 
 AVBufferRef *tx_filtergraph_create(
     TXMainContext *ctx,
+    const char *name,
     const char *graph,
     enum AVHWDeviceType hwctx_type,
     AVDictionary *init_opts
