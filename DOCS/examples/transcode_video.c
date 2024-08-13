@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         ctx,
         "h264_nvenc",
         NULL, // name
-        &encoder_options,
+        encoder_options,
         NULL // init_opts
     );
 
@@ -86,7 +86,8 @@ int main(int argc, char *argv[])
         ctx,
         "out.mkv",
         NULL, // out_format
-        NULL // init_opts
+        NULL, // options
+        NULL  // init_opts
     );
 
     err = tx_link(ctx, encoder, muxer, 0);
