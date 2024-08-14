@@ -70,12 +70,15 @@ int main(int argc, char *argv[])
     err = av_dict_set(&encoder_options, "bf", "0", 0);
     assert(err == 0);
 
+    AVDictionary *encoder_init_options = NULL;
+    err = av_dict_set(&encoder_init_options, "fifo_flags", "block_no_input,block_max_output", 0);
+    assert(err == 0);
     AVBufferRef *encoder = tx_encoder_create(
         ctx,
         "h264_nvenc",
         NULL, // name
         encoder_options,
-        NULL // init_opts
+        encoder_init_options
     );
 
     err = tx_link(ctx, decoder, encoder, 0);
