@@ -282,9 +282,9 @@ int sp_generic_link(TXMainContext *ctx,
     ctrl_fn src_ctrl_fn = NULL;
     ctrl_fn dst_ctrl_fn = NULL;
 
-#define EITHER(o1, o2, t1, t2)                                                 \
-    ((sp_class_get_type(o1->data) & t1 || sp_class_get_type(o1->data) & t2) && \
-     (sp_class_get_type(o2->data) & t1 || sp_class_get_type(o2->data) & t2))   \
+#define EITHER(o1, o2, t1, t2)                                                                             \
+    ((((sp_class_get_type(o1->data) & (t1)) == (t1)) && ((sp_class_get_type(o2->data) & (t2)) == (t2))) || \
+     (((sp_class_get_type(o1->data) & (t2)) == (t2)) && ((sp_class_get_type(o2->data) & (t1)) == (t1))))
 
 #define PICK_REF(o1, o2, type)                                   \
     av_buffer_ref(sp_class_get_type(o1->data) == type ? o1 : o2)
@@ -331,8 +331,11 @@ int sp_generic_link(TXMainContext *ctx,
         dst_ctrl_fn = sp_filter_ctrl;
     } else if ((sp_class_get_type(obj1->data) == SP_TYPE_FILTER) &&
                (sp_class_get_type(obj2->data) == SP_TYPE_FILTER)) {
-        src_ref = av_buffer_ref(obj2);
-        dst_ref = av_buffer_ref(obj1);
+        /* NOTE: we're unable to determine order for filter to filter connections.
+         * Assume that src is 1, dst is 2.
+         * The API should be improved to remove such ambiguities. */
+        src_ref = av_buffer_ref(obj1);
+        dst_ref = av_buffer_ref(obj2);
         src_filt_pad = av_strdup(src_pad_name);
         dst_filt_pad = av_strdup(dst_pad_name);
         src_ctrl_fn = sp_filter_ctrl;
@@ -368,11 +371,15 @@ int sp_generic_link(TXMainContext *ctx,
         src_ctrl_fn = sp_demuxer_ctrl;
         dst_ctrl_fn = sp_decoder_ctrl;
     } else {
-        sp_log(ctx, SP_LOG_ERROR, "Unable to link \"%s\" (%s) to \"%s\" (%s)!",
+        sp_log(ctx, SP_LOG_ERROR, "Unable to link \"%s\" (%s) to \"%s\" (%s)!\n",
                sp_class_get_name(obj1->data), sp_class_type_string(obj1->data),
                sp_class_get_name(obj2->data), sp_class_type_string(obj2->data));
         return AVERROR(EINVAL);
     }
+
+    sp_log(ctx, SP_LOG_VERBOSE, "Linking \"%s\" (%s) to \"%s\" (%s)\n",
+           sp_class_get_name(obj1->data), sp_class_type_string(obj1->data),
+           sp_class_get_name(obj2->data), sp_class_type_string(obj2->data));
 
     void *sctx = (void *)src_ref->data;
     void *dctx = (void *)dst_ref->data;
