@@ -329,7 +329,7 @@ int tx_destroy(
     TXMainContext *ctx,
     AVBufferRef **ref
 ) {
-    (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, ref);
+    (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, *ref);
     av_buffer_unref(ref);
     return 0;
 }
