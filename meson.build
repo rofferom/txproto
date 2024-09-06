@@ -43,7 +43,7 @@ dependencies = [
     dependency('libavformat', version: '>= 58.42.100'),
     dependency('libswresample', version: '>= 3.6.100'),
     dependency('libavfilter', version: '>= 7.79.100'),
-    dependency('libavutil', version: '>= 56.43.100'),
+    dependency('libavutil', version: '>= 58.37.100'),
 
     # lua
     dependency('lua', version: ['>= ' + lua_ver, '< ' + lua_ver_maj.to_string() + '.' + (lua_ver_min + 1).to_string()]),
