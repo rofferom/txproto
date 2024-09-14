@@ -584,11 +584,18 @@ static AVBufferRef *dmabuf_pool_alloc(void *opaque, size_t size)
     AVDRMFrameDescriptor *desc = av_malloc(sizeof(AVDRMFrameDescriptor));
     WaylandDMABUFCopyFrame *f = av_malloc(sizeof(WaylandDMABUFCopyFrame));
 
-    f->bo = gbm_bo_create(priv->scrcpy.dmabuf.gbm_dev,
-                          priv->scrcpy.dmabuf.width,
-                          priv->scrcpy.dmabuf.height,
-                          priv->scrcpy.dmabuf.format,
-                          GBM_BO_USE_LINEAR | GBM_BO_USE_RENDERING);
+    const uint64_t modifiers = 0;
+    f->bo = gbm_bo_create_with_modifiers(priv->scrcpy.dmabuf.gbm_dev,
+                                         priv->scrcpy.dmabuf.width,
+                                         priv->scrcpy.dmabuf.height,
+                                         priv->scrcpy.dmabuf.format,
+                                         &modifiers, 1);
+    if (!f->bo)
+        f->bo = gbm_bo_create(priv->scrcpy.dmabuf.gbm_dev,
+                              priv->scrcpy.dmabuf.width,
+                              priv->scrcpy.dmabuf.height,
+                              priv->scrcpy.dmabuf.format,
+                              GBM_BO_USE_LINEAR | GBM_BO_USE_RENDERING);
 
     struct zwp_linux_buffer_params_v1 *params;
     params = zwp_linux_dmabuf_v1_create_params(priv->main->wl->dmabuf);
