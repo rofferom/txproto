@@ -600,7 +600,7 @@ static int drain_output_pad(FilterContext *ctx, FilterPad *out_pad,
         FormatExtraData *fe = (FormatExtraData *)filt_frame->opaque_ref->data;
         fe->time_base = out_pad->buffer->inputs[0]->time_base;
         if (out_pad->buffer->inputs[0]->type == AVMEDIA_TYPE_VIDEO)
-            fe->avg_frame_rate  = out_pad->buffer->inputs[0]->frame_rate;
+            fe->avg_frame_rate  = av_buffersink_get_frame_rate(out_pad->buffer);
         else if (out_pad->buffer->inputs[0]->type == AVMEDIA_TYPE_AUDIO)
             fe->bits_per_sample = av_get_bytes_per_sample(out_pad->buffer->inputs[0]->format) * 8;
 
