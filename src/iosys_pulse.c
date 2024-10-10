@@ -235,7 +235,7 @@ static void stream_read_cb(pa_stream *stream, size_t size, void *data)
     }
 
     if (!priv->delay)
-        priv->delay = av_gettime_relative() - priv->epoch;
+        priv->delay = sp_gettime_relative() - priv->epoch;
 
     /* Get PTS*/
     pa_usec_t pts;

@@ -254,7 +254,7 @@ static void *xcb_thread(void *s)
         frame->width       = entry->width;
         frame->height      = entry->height;
         frame->format      = pixfmt;
-        frame->pts         = av_gettime_relative() - priv->epoch;
+        frame->pts         = sp_gettime_relative() - priv->epoch;
         frame->time_base   = AV_TIME_BASE_Q;
         frame->data[0]     = (uint8_t *)out_buf->data;
         frame->linesize[0] = entry->width * bpp / 8;
@@ -295,7 +295,7 @@ static void *xcb_thread(void *s)
         geo_c = xcb_get_geometry(ctx->con, priv->win);
 
         /* Framerate limiting */
-        int64_t now = av_gettime_relative();
+        int64_t now = sp_gettime_relative();
         if (priv->next_frame_ts && (now < priv->next_frame_ts)) {
             int64_t wait_time;
             while (1) {
@@ -303,7 +303,7 @@ static void *xcb_thread(void *s)
                 if (wait_time <= 0)
                     break;
                 av_usleep(wait_time);
-                now = av_gettime_relative();
+                now = sp_gettime_relative();
             }
         }
         priv->next_frame_ts = now + priv->frame_delay;

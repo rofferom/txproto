@@ -379,7 +379,7 @@ static void dmabuf_frame_ready(void *data, struct zwlr_export_dmabuf_frame_v1 *f
     int64_t delay = presented - ((tsp.tv_sec * 1000000000) + tsp.tv_nsec);
 
     priv->frame->pts = av_add_stable(fe->time_base, delay, av_make_q(1, 1000000),
-                                     av_gettime_relative() - priv->epoch);
+                                     sp_gettime_relative() - priv->epoch);
 
 	/* Attach the hardware frame context to the frame */
     if ((err = attach_drm_frames_ref(entry, priv->frame, sw_fmt)))
@@ -410,7 +410,7 @@ static void dmabuf_frame_ready(void *data, struct zwlr_export_dmabuf_frame_v1 *f
 
     /* Framerate limiting */
     if (priv->frame_delay) {
-        int64_t now = av_gettime_relative();
+        int64_t now = sp_gettime_relative();
         if (priv->next_frame_ts && (now < priv->next_frame_ts)) {
             int64_t wait_time;
             while (1) {
@@ -418,7 +418,7 @@ static void dmabuf_frame_ready(void *data, struct zwlr_export_dmabuf_frame_v1 *f
                 if (wait_time <= 0)
                     break;
                 av_usleep(wait_time);
-                now = av_gettime_relative();
+                now = sp_gettime_relative();
             }
         }
         priv->next_frame_ts = now + priv->frame_delay;
@@ -817,7 +817,7 @@ static void scrcpy_frame_ready(void *data, struct zwlr_screencopy_frame_v1 *fram
     int64_t delay = presented - ((tsp.tv_sec * 1000000000) + tsp.tv_nsec);
 
     priv->frame->pts = av_add_stable(fe->time_base, delay, av_make_q(1, 1000000),
-                                     av_gettime_relative() - priv->epoch);
+                                     sp_gettime_relative() - priv->epoch);
 
     sp_log(entry, SP_LOG_TRACE, "Pushing frame to FIFO, pts = %f\n",
            av_q2d(fe->time_base) * priv->frame->pts);
@@ -846,7 +846,7 @@ static void scrcpy_frame_ready(void *data, struct zwlr_screencopy_frame_v1 *fram
 
     /* Framerate limiting */
     if (priv->frame_delay) {
-        int64_t now = av_gettime_relative();
+        int64_t now = sp_gettime_relative();
         if (priv->next_frame_ts && (now < priv->next_frame_ts)) {
             int64_t wait_time;
             while (1) {
@@ -854,7 +854,7 @@ static void scrcpy_frame_ready(void *data, struct zwlr_screencopy_frame_v1 *fram
                 if (wait_time <= 0)
                     break;
                 av_usleep(wait_time);
-                now = av_gettime_relative();
+                now = sp_gettime_relative();
             }
         }
         priv->next_frame_ts = now + priv->frame_delay;

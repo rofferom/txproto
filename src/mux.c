@@ -83,7 +83,7 @@ static void *muxing_thread(void *arg)
 
     /* Mux stats */
     SlidingWinCtx sctx_mux = { 0 };
-    int64_t last_pos_update = av_gettime_relative();
+    int64_t last_pos_update = sp_gettime_relative();
     int64_t mux_rate = 0;
     int64_t last_pos = ctx->avf->pb->pos;
     int64_t buf_bytes = 0;
@@ -125,7 +125,7 @@ static void *muxing_thread(void *arg)
 
         rate[sidx] = sp_sliding_win(rate_c, in_pkt->size, in_pkt->pts, src_tb, src_tb.den, 0) << 3;
 
-        latency[sidx]  = av_gettime_relative() - ctx->epoch;
+        latency[sidx]  = sp_gettime_relative() - ctx->epoch;
         latency[sidx] -= av_rescale_q(in_pkt->pts, src_tb, av_make_q(1, 1000000));
         latency[sidx]  = sp_sliding_win(latency_c, latency[sidx], in_pkt->pts, src_tb, src_tb.den, 1);
 
@@ -142,7 +142,7 @@ static void *muxing_thread(void *arg)
 
         buf_bytes = ctx->avf->pb->buf_ptr - ctx->avf->pb->buffer;
         if (last_pos != ctx->avf->pb->pos) {
-            int64_t t_delta, cur_time = av_gettime_relative();
+            int64_t t_delta, cur_time = sp_gettime_relative();
             mux_rate = (ctx->avf->pb->pos - last_pos) << 3;
             t_delta = cur_time - last_pos_update;
             mux_rate = av_rescale(mux_rate, 1000000, t_delta);

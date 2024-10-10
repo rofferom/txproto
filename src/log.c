@@ -418,7 +418,7 @@ static void main_log(SPClass *class, enum SPLogLevel lvl, const char *format,
     int json_file = log_ctx.json_file;
     int with_color = log_ctx.color_out;
     int log_line = !!log_ctx.log_file && !nolog;
-    int64_t time_offset = av_gettime_relative() - log_ctx.time_offset;
+    int64_t time_offset = sp_gettime_relative() - log_ctx.time_offset;
 
     if (!class) {
         class = &log_ctx.null_class;
@@ -1013,7 +1013,7 @@ int sp_log_init(enum SPLogLevel global_log_level)
     log_ctx.log_levels[0].lvl = global_log_level;
     log_ctx.num_log_levels = 1;
 
-    log_ctx.time_offset = av_gettime_relative();
+    log_ctx.time_offset = sp_gettime_relative();
     av_log_set_callback(log_ff_cb);
 
 end:

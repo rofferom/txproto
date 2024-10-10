@@ -87,7 +87,7 @@ static void *lavd_thread(void *s)
         }
 
         if (!priv->delay)
-            priv->delay = av_gettime_relative() - priv->epoch - pkt->pts;
+            priv->delay = sp_gettime_relative() - priv->epoch - pkt->pts;
         pkt->pts += priv->delay;
 
 send:

@@ -4,6 +4,7 @@
 #include <libtxproto/events.h>
 
 #include <libtxproto/epoch.h>
+#include "os_compat.h"
 
 static int epoch_event_cb(AVBufferRef *event, void *callback_ctx, void *_ctx,
                           void *dep_ctx, void *data)
@@ -15,7 +16,7 @@ static int epoch_event_cb(AVBufferRef *event, void *callback_ctx, void *_ctx,
     int64_t val;
     switch(epoch_ctx->mode) {
     case EP_MODE_OFFSET:
-        val = av_gettime_relative() + epoch_ctx->value;
+        val = sp_gettime_relative() + epoch_ctx->value;
         break;
     case EP_MODE_SYSTEM:
         val = 0;
@@ -25,7 +26,7 @@ static int epoch_event_cb(AVBufferRef *event, void *callback_ctx, void *_ctx,
         val = 0;
         break;
     case EP_MODE_EXTERNAL:
-        val = (*epoch_ctx->external_cb)(av_gettime_relative(), epoch_ctx->external_arg);
+        val = (*epoch_ctx->external_cb)(sp_gettime_relative(), epoch_ctx->external_arg);
         break;
     }
 

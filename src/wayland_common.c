@@ -322,7 +322,7 @@ static void *wayland_events_thread(void *arg)
 
     /* libwayland's buffer is 4k, plus the kernel's buffer */
     const int capacity = 4096 + fcntl(ctx->display_fd, F_GETPIPE_SZ);
-    int64_t last_reported = av_gettime_relative();
+    int64_t last_reported = sp_gettime_relative();
     const int64_t report_period = 1000000;
 
     while (1) {
@@ -351,7 +351,7 @@ static void *wayland_events_thread(void *arg)
 
         if (fds[0].revents & POLLIN) {
             int in_bytes = 0;
-            int64_t in_time = av_gettime_relative();
+            int64_t in_time = sp_gettime_relative();
             ioctl(ctx->display_fd, FIONREAD, &in_bytes);
 
             if (wl_display_read_events(ctx->display) < 0) {

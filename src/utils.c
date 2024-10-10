@@ -745,9 +745,9 @@ int sp_eventlist_dispatch(void *ctx, SPBufferList *list, SPEventType type, void 
                 sp_log(ctx, SP_LOG_DEBUG, "Waiting on event (id:%lu %s)!\n",
                        event->id, fstr);
 
-                int64_t event_wait_start = av_gettime_relative();
+                int64_t event_wait_start = sp_gettime_relative();
                 pthread_cond_wait(&event->cond, event->lock);
-                int64_t event_wait_done = av_gettime_relative();
+                int64_t event_wait_done = sp_gettime_relative();
 
                 sp_log(ctx, SP_LOG_DEBUG, "Done waiting after %.2f ms, dispatching "
                        "event (id:%lu %s)%s!\n",
