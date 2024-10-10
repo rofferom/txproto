@@ -35,6 +35,8 @@
 
 #include <libtxproto/txproto_main.h>
 
+#include "os_compat.h"
+
 #ifdef HAVE_LIBEDIT
 #include "cli.h"
 #endif
@@ -127,6 +129,8 @@ int main(int argc, char *argv[])
     TXMainContext *ctx = av_mallocz(sizeof(*ctx));
     if (!ctx)
         return AVERROR(ENOMEM);
+
+    sp_clock_init();
 
     if ((err = sp_log_init(SP_LOG_INFO)) < 0)
         return err;

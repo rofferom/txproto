@@ -45,3 +45,7 @@ int      sp_make_wakeup_pipe (int pipes[2]);
 void     sp_write_wakeup_pipe(int pipes[2], int64_t val);
 int64_t  sp_flush_wakeup_pipe(int pipes[2]);
 void     sp_close_wakeup_pipe(int pipes[2]);
+
+/* Time API */
+void sp_clock_init();
+int64_t sp_gettime_relative(void);

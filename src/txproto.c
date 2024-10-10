@@ -13,6 +13,7 @@
 #include <libtxproto/txproto_main.h>
 #include <libtxproto/txproto.h>
 #include "iosys_common.h"
+#include "os_compat.h"
 
 TXMainContext *tx_new(void)
 {
@@ -23,6 +24,8 @@ TXMainContext *tx_new(void)
 int tx_init(TXMainContext *ctx)
 {
     int err;
+
+    sp_clock_init();
 
     if ((err = sp_log_init(SP_LOG_INFO)) < 0)
         return err;

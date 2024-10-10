@@ -22,6 +22,7 @@
 # endif
 
 #include "os_compat.h"
+#include <libavutil/time.h>
 #include <libtxproto/utils.h>
 
 #if defined(HAVE_PTHREAD_SETNAME_NP) && !defined(__APPLE__)
@@ -178,3 +179,15 @@ void* sp_dlsym(void* handle, const char *sym_name)
 }
 
 #endif
+
+/* ================================================ */
+/* TIME API SECTION                                 */
+/* ================================================ */
+void sp_clock_init()
+{
+}
+
+int64_t sp_gettime_relative(void)
+{
+    return av_gettime_relative();
+}
