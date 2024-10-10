@@ -109,6 +109,27 @@ err:
     return err;
 }
 
+int tx_epoch_set_system(TXMainContext *ctx)
+{
+    AVBufferRef *epoch_event = sp_epoch_event_new(ctx);
+
+    int err = sp_epoch_event_set_system(epoch_event);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "Unable to set epoch system: %s!", av_err2str(err));
+        goto err;
+    }
+
+    err = sp_eventlist_add(ctx, ctx->events, epoch_event, 0);
+    if (err < 0)
+        goto err;
+
+    return 0;
+
+err:
+    av_buffer_unref(&epoch_event);
+    return err;
+}
+
 int tx_commit(TXMainContext *ctx)
 {
     return sp_eventlist_dispatch(ctx, ctx->events, SP_EVENT_ON_COMMIT, NULL);
