@@ -34,6 +34,8 @@ void tx_free(TXMainContext *ctx);
 
 int tx_epoch_set_offset(TXMainContext *ctx, int64_t value);
 
+int tx_epoch_set_system(TXMainContext *ctx);
+
 int tx_commit(TXMainContext *ctx);
 
 AVBufferRef *tx_demuxer_create(
