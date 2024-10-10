@@ -42,6 +42,8 @@ void tx_set_log_cb(tx_log_cb log_cb, void *userdata);
 
 int tx_epoch_set_offset(TXMainContext *ctx, int64_t value);
 
+int tx_epoch_set_system(TXMainContext *ctx);
+
 int tx_commit(TXMainContext *ctx);
 
 int tx_ctrl(TXMainContext *ctx, AVBufferRef *ref, SPEventType flags, void *arg);
