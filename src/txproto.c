@@ -88,7 +88,7 @@ int tx_log_set_ctx_lvl_str(const char *component, const char *lvl)
     return sp_log_set_ctx_lvl_str(component, lvl);
 }
 
-int tx_epoch_set(TXMainContext *ctx, int64_t value)
+int tx_epoch_set_offset(TXMainContext *ctx, int64_t value)
 {
     AVBufferRef *epoch_event = sp_epoch_event_new(ctx);
 
