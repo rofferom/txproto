@@ -183,6 +183,30 @@ void* sp_dlsym(void* handle, const char *sym_name)
 /* ================================================ */
 /* TIME API SECTION                                 */
 /* ================================================ */
+#ifdef _WIN32
+LARGE_INTEGER clock_freq;
+
+void sp_clock_init()
+{
+    BOOL ret = QueryPerformanceFrequency(&clock_freq);
+    sp_assert(ret != 0);
+}
+
+int64_t sp_gettime_relative(void)
+{
+    LARGE_INTEGER counter;
+    BOOL ret = QueryPerformanceCounter(&counter);
+    sp_assert(ret != 0);
+
+    // microseconds
+    // Based on
+    // https://learn.microsoft.com/en-us/windows/win32/sysinfo/acquiring-high-resolution-time-stamps#using-qpc-in-native-code
+    int64_t micros = counter.QuadPart * 1000000;
+    micros /= clock_freq.QuadPart;
+
+    return micros;
+}
+#else
 void sp_clock_init()
 {
 }
