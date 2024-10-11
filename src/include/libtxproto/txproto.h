@@ -73,6 +73,12 @@ AVBufferRef *tx_encoder_create(
     const TxEncoderOptions *options
 );
 
+int tx_encoder_set_bitrate(
+    TXMainContext *ctx,
+    AVBufferRef *encoder,
+    int bitrate
+);
+
 AVBufferRef *tx_muxer_create(
     TXMainContext *ctx,
     const char *out_url,

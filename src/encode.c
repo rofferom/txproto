@@ -820,7 +820,15 @@ static int encoder_ioctx_ctrl_cb(AVBufferRef *event_ref, void *callback_ctx,
     } else if (event->ctrl & SP_EVENT_CTRL_COMMAND) {
         const char *command = dict_get(event->cmd, "command");
 
-        sp_log(ctx, SP_LOG_WARN, "Got unknown command %s\n", command);
+        if (!strcmp(command, "set_bitrate")) {
+            const char *bitrate_str = dict_get(event->cmd, "bitrate");
+            int bitrate = atoi(bitrate_str);
+
+            sp_log(ctx, SP_LOG_INFO, "Change bitrate to %d\n", bitrate);
+            ctx->avctx->bit_rate = bitrate;
+        } else {
+            sp_log(ctx, SP_LOG_WARN, "Got unknown command %s\n", command);
+        }
     } else {
         return AVERROR(ENOTSUP);
     }
