@@ -223,6 +223,40 @@ err:
     return NULL;
 }
 
+int tx_encoder_set_bitrate(TXMainContext *ctx, AVBufferRef *encoder, int bitrate)
+{
+    AVDictionary *commands = NULL;
+    int err = 0;
+
+    err = av_dict_set(&commands, "command", "set_bitrate", 0);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "av_dict_set() failed: %s!", av_err2str(err));
+        return err;
+    }
+
+    err = av_dict_set_int(&commands, "bitrate", bitrate, 0);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "av_dict_set_int() failed: %s!", av_err2str(err));
+        return err;
+    }
+
+    err = sp_encoder_ctrl(encoder, SP_EVENT_CTRL_COMMAND, commands);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "sp_encoder_ctrl() failed: %s!", av_err2str(err));
+        return err;
+    }
+
+    err = sp_add_commit_fn_to_list(ctx, sp_encoder_ctrl, encoder);
+    if (err < 0) {
+        sp_log(ctx, SP_LOG_ERROR, "sp_add_commit_fn_to_list() failed: %s!", av_err2str(err));
+        return err;
+    }
+
+    av_dict_free(&commands);
+
+    return 0;
+}
+
 AVBufferRef *tx_muxer_create(TXMainContext *ctx, const char *out_url,
                              const char *out_format, AVDictionary *options,
                              AVDictionary *init_opts)
