@@ -817,6 +817,10 @@ static int encoder_ioctx_ctrl_cb(AVBufferRef *event_ref, void *callback_ctx,
             atomic_store(&ctx->soft_flush, 1);
             sp_frame_fifo_push(ctx->src_frames, NULL);
         }
+    } else if (event->ctrl & SP_EVENT_CTRL_COMMAND) {
+        const char *command = dict_get(event->cmd, "command");
+
+        sp_log(ctx, SP_LOG_WARN, "Got unknown command %s\n", command);
     } else {
         return AVERROR(ENOTSUP);
     }
@@ -827,7 +831,7 @@ static int encoder_ioctx_ctrl_cb(AVBufferRef *event_ref, void *callback_ctx,
 int sp_encoder_ctrl(AVBufferRef *ctx_ref, SPEventType ctrl, void *arg)
 {
     EncodingContext *ctx = (EncodingContext *)ctx_ref->data;
-    return sp_ctrl_template(ctx, ctx->events, 0x0,
+    return sp_ctrl_template(ctx, ctx->events, SP_EVENT_CTRL_COMMAND,
                             encoder_ioctx_ctrl_cb, ctrl, arg);
 }
 
