@@ -22,6 +22,7 @@
 #include <libavutil/avstring.h>
 #include <libavutil/channel_layout.h>
 #include <libavutil/crc.h>
+#include <libavutil/version.h>
 
 #include <pulse/pulseaudio.h>
 
@@ -122,6 +123,9 @@ static const struct {
 
 static const AVChannelLayout pa_to_lavu_ch_map(const pa_channel_map *ch_map)
 {
+    AVChannelLayout out = { 0 };
+
+#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(58, 37, 100)
     static const uint64_t channel_map[PA_CHANNEL_POSITION_MAX] = {
         [PA_CHANNEL_POSITION_FRONT_LEFT]            = AV_CHAN_FRONT_LEFT,
         [PA_CHANNEL_POSITION_FRONT_RIGHT]           = AV_CHAN_FRONT_RIGHT,
@@ -143,7 +147,6 @@ static const AVChannelLayout pa_to_lavu_ch_map(const pa_channel_map *ch_map)
         [PA_CHANNEL_POSITION_TOP_REAR_CENTER]       = AV_CHAN_TOP_BACK_CENTER,
     };
 
-    AVChannelLayout out = { 0 };
     av_channel_layout_custom_init(&out, ch_map->channels);
 
     for (int i = 0; i < ch_map->channels; i++)
@@ -151,6 +154,37 @@ static const AVChannelLayout pa_to_lavu_ch_map(const pa_channel_map *ch_map)
 
     av_channel_layout_retype(&out, AV_CHANNEL_ORDER_NATIVE,
                              AV_CHANNEL_LAYOUT_RETYPE_FLAG_CANONICAL);
+#else
+    static const uint64_t channel_map[PA_CHANNEL_POSITION_MAX] = {
+        [PA_CHANNEL_POSITION_FRONT_LEFT]            = AV_CH_FRONT_LEFT,
+        [PA_CHANNEL_POSITION_FRONT_RIGHT]           = AV_CH_FRONT_RIGHT,
+        [PA_CHANNEL_POSITION_FRONT_CENTER]          = AV_CH_FRONT_CENTER,
+        [PA_CHANNEL_POSITION_REAR_CENTER]           = AV_CH_BACK_CENTER,
+        [PA_CHANNEL_POSITION_REAR_LEFT]             = AV_CH_BACK_LEFT,
+        [PA_CHANNEL_POSITION_REAR_RIGHT]            = AV_CH_BACK_RIGHT,
+        [PA_CHANNEL_POSITION_LFE]                   = AV_CH_LOW_FREQUENCY,
+        [PA_CHANNEL_POSITION_FRONT_LEFT_OF_CENTER]  = AV_CH_FRONT_LEFT_OF_CENTER,
+        [PA_CHANNEL_POSITION_FRONT_RIGHT_OF_CENTER] = AV_CH_FRONT_RIGHT_OF_CENTER,
+        [PA_CHANNEL_POSITION_SIDE_LEFT]             = AV_CH_SIDE_LEFT,
+        [PA_CHANNEL_POSITION_SIDE_RIGHT]            = AV_CH_SIDE_RIGHT,
+        [PA_CHANNEL_POSITION_TOP_CENTER]            = AV_CH_TOP_CENTER,
+        [PA_CHANNEL_POSITION_TOP_FRONT_LEFT]        = AV_CH_TOP_FRONT_LEFT,
+        [PA_CHANNEL_POSITION_TOP_FRONT_RIGHT]       = AV_CH_TOP_FRONT_RIGHT,
+        [PA_CHANNEL_POSITION_TOP_FRONT_CENTER]      = AV_CH_TOP_FRONT_CENTER,
+        [PA_CHANNEL_POSITION_TOP_REAR_LEFT]         = AV_CH_TOP_BACK_LEFT,
+        [PA_CHANNEL_POSITION_TOP_REAR_RIGHT]        = AV_CH_TOP_BACK_RIGHT,
+        [PA_CHANNEL_POSITION_TOP_REAR_CENTER]       = AV_CH_TOP_BACK_CENTER,
+    };
+
+    uint64_t map = 0;
+    for (int i = 0; i < ch_map->channels; i++)
+        map |= channel_map[ch_map->map[i]];
+
+    if (map)
+        av_channel_layout_from_mask(&out, map);
+    else
+        av_channel_layout_default(&out, ch_map->channels);
+#endif
 
     return out;
 }
