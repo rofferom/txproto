@@ -46,20 +46,13 @@ int tx_commit(TXMainContext *ctx);
 
 int tx_ctrl(TXMainContext *ctx, AVBufferRef *ref, SPEventType flags, void *arg);
 
-AVBufferRef *tx_demuxer_create(
-    TXMainContext *ctx,
-    const char *name,
-    const char *in_url,
-    const char *in_format,
-    AVDictionary *start_options,
-    AVDictionary *init_opts
-);
+AVBufferRef *tx_demuxer_create(TXMainContext *ctx, const char *name,
+                               const char *in_url, const char *in_format,
+                               AVDictionary *start_options,
+                               AVDictionary *init_opts);
 
-AVBufferRef *tx_decoder_create(
-    TXMainContext *ctx,
-    const char *dec_name,
-    AVDictionary *init_opts
-);
+AVBufferRef *tx_decoder_create(TXMainContext *ctx, const char *dec_name,
+                               AVDictionary *init_opts);
 
 typedef struct TxEncoderOptions {
     const char *enc_name;
@@ -71,59 +64,33 @@ typedef struct TxEncoderOptions {
     enum AVPixelFormat pix_fmt;
 } TxEncoderOptions;
 
-AVBufferRef *tx_encoder_create(
-    TXMainContext *ctx,
-    const TxEncoderOptions *options
-);
+AVBufferRef *tx_encoder_create(TXMainContext *ctx,
+                               const TxEncoderOptions *options);
 
-AVBufferRef *tx_muxer_create(
-    TXMainContext *ctx,
-    const char *out_url,
-    const char *out_format,
-    AVDictionary *options,
-    AVDictionary *init_opts
-);
+AVBufferRef *tx_muxer_create(TXMainContext *ctx, const char *out_url,
+                             const char *out_format, AVDictionary *options,
+                             AVDictionary *init_opts);
 
-AVBufferRef *tx_filtergraph_create(
-    TXMainContext *ctx,
-    const char *graph,
-    enum AVHWDeviceType hwctx_type,
-    AVDictionary *init_opts
-);
+AVBufferRef *tx_filtergraph_create(TXMainContext *ctx, const char *graph,
+                                   enum AVHWDeviceType hwctx_type,
+                                   AVDictionary *init_opts);
 
-int tx_link(
-    TXMainContext *ctx,
-    AVBufferRef *src,
-    AVBufferRef *dst,
-    int src_stream_id
-);
+int tx_link(TXMainContext *ctx, AVBufferRef *src, AVBufferRef *dst,
+            int src_stream_id);
 
 int tx_filtergraph_command(TXMainContext *ctx, AVBufferRef *graph,
                            const char *filter_target, AVDictionary *commands);
 
-int tx_destroy(
-    TXMainContext *ctx,
-    AVBufferRef **ref
-);
+int tx_destroy(TXMainContext *ctx, AVBufferRef **ref);
 
-int tx_event_register(
-    TXMainContext *ctx,
-    AVBufferRef *target,
-    AVBufferRef *event
-);
+int tx_event_register(TXMainContext *ctx, AVBufferRef *target,
+                      AVBufferRef *event);
 
-int tx_event_destroy(
-    TXMainContext *ctx,
-    AVBufferRef *event
-);
+int tx_event_destroy(TXMainContext *ctx, AVBufferRef *event);
 
-AVBufferRef *tx_io_register_cb(
-    TXMainContext *ctx,
-    const char **api_list,
-    int (*source_event_cb)(IOSysEntry *entry, void *userdata),
-    void *userdata
-);
+AVBufferRef *tx_io_register_cb(TXMainContext *ctx, const char **api_list,
+                               int (*source_event_cb)(IOSysEntry *entry, void *userdata),
+                               void *userdata);
 
-AVBufferRef *tx_io_create(TXMainContext *ctx,
-                          uint32_t identifier,
+AVBufferRef *tx_io_create(TXMainContext *ctx, uint32_t identifier,
                           AVDictionary *opts);
