@@ -109,14 +109,11 @@ int tx_ctrl(TXMainContext *ctx, AVBufferRef *ref, SPEventType flags, void *arg)
     return sp_generic_ctrl(ctx, ref, flags, arg);
 }
 
-AVBufferRef *tx_demuxer_create(
-    TXMainContext *ctx,
-    const char *name,
-    const char *in_url,
-    const char *in_format,
-    AVDictionary *start_options,
-    AVDictionary *init_opts
-) {
+AVBufferRef *tx_demuxer_create(TXMainContext *ctx, const char *name,
+                               const char *in_url, const char *in_format,
+                               AVDictionary *start_options,
+                               AVDictionary *init_opts)
+{
     int err;
     AVBufferRef *mctx_ref = sp_demuxer_alloc();
     DemuxingContext *mctx = (DemuxingContext *)mctx_ref->data;
@@ -149,11 +146,9 @@ err:
     return NULL;
 }
 
-AVBufferRef *tx_decoder_create(
-    TXMainContext *ctx,
-    const char *dec_name,
-    AVDictionary *init_opts
-) {
+AVBufferRef *tx_decoder_create(TXMainContext *ctx, const char *dec_name,
+                               AVDictionary *init_opts)
+{
     int err;
     AVBufferRef *dctx_ref = sp_decoder_alloc();
     DecodingContext *dctx = (DecodingContext *)dctx_ref->data;
@@ -187,10 +182,9 @@ err:
     return NULL;
 }
 
-AVBufferRef *tx_encoder_create(
-    TXMainContext *ctx,
-    const TxEncoderOptions *options
-) {
+AVBufferRef *tx_encoder_create(TXMainContext *ctx,
+                               const TxEncoderOptions *options)
+{
     int err;
     AVBufferRef *ectx_ref = sp_encoder_alloc();
     EncodingContext *ectx = (EncodingContext *)ectx_ref->data;
@@ -229,13 +223,10 @@ err:
     return NULL;
 }
 
-AVBufferRef *tx_muxer_create(
-    TXMainContext *ctx,
-    const char *out_url,
-    const char *out_format,
-    AVDictionary *options,
-    AVDictionary *init_opts
-) {
+AVBufferRef *tx_muxer_create(TXMainContext *ctx, const char *out_url,
+                             const char *out_format, AVDictionary *options,
+                             AVDictionary *init_opts)
+{
     int err;
     AVBufferRef *mctx_ref = sp_muxer_alloc();
     MuxingContext *mctx = (MuxingContext *)mctx_ref->data;
@@ -274,12 +265,10 @@ err:
     return NULL;
 }
 
-AVBufferRef *tx_filtergraph_create(
-    TXMainContext *ctx,
-    const char *graph,
-    enum AVHWDeviceType hwctx_type,
-    AVDictionary *init_opts
-) {
+AVBufferRef *tx_filtergraph_create(TXMainContext *ctx, const char *graph,
+                                   enum AVHWDeviceType hwctx_type,
+                                   AVDictionary *init_opts)
+{
     int err;
     AVBufferRef *fctx_ref = sp_filter_alloc();
 
@@ -312,12 +301,9 @@ err:
     return NULL;
 }
 
-int tx_link(
-    TXMainContext *ctx,
-    AVBufferRef *src,
-    AVBufferRef *dst,
-    int src_stream_id
-) {
+int tx_link(TXMainContext *ctx, AVBufferRef *src, AVBufferRef *dst,
+            int src_stream_id)
+{
     return sp_generic_link(
         ctx,
         src,
@@ -352,20 +338,16 @@ int tx_filtergraph_command(TXMainContext *ctx, AVBufferRef *graph,
     return 0;
 }
 
-int tx_destroy(
-    TXMainContext *ctx,
-    AVBufferRef **ref
-) {
+int tx_destroy(TXMainContext *ctx, AVBufferRef **ref)
+{
     (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, *ref);
     av_buffer_unref(ref);
     return 0;
 }
 
-int tx_event_register(
-    TXMainContext *ctx,
-    AVBufferRef *target,
-    AVBufferRef *event
-) {
+int tx_event_register(TXMainContext *ctx, AVBufferRef *target,
+                      AVBufferRef *event)
+{
     ctrl_fn target_ctrl_fn = sp_get_ctrl_fn(target->data);
     if (!target_ctrl_fn) {
         sp_log(ctx, SP_LOG_ERROR, "Unsupported CTRL type: %s!",
@@ -390,22 +372,18 @@ static int source_event_cb(AVBufferRef *event, void *callback_ctx, void *ctx,
     return (*source_cb_ctx->cb)(entry, source_cb_ctx->userdata);
 }
 
-int tx_event_destroy(
-    TXMainContext *ctx,
-    AVBufferRef *event
-) {
+int tx_event_destroy(TXMainContext *ctx, AVBufferRef *event)
+{
     (void)sp_bufferlist_pop(ctx->ext_buf_refs, sp_bufferlist_find_fn_data, event);
     sp_event_unref_expire(&event);
 
     return 0;
 }
 
-AVBufferRef *tx_io_register_cb(
-    TXMainContext *ctx,
-    const char **api_list,
-    int (*cb)(IOSysEntry *entry, void *userdata),
-    void *userdata
-) {
+AVBufferRef *tx_io_register_cb(TXMainContext *ctx, const char **api_list,
+                               int (*cb)(IOSysEntry *entry, void *userdata),
+                               void *userdata)
+{
     AVBufferRef *source_event;
     source_event = sp_io_alloc(ctx, (const char **)api_list, source_event_cb,
                                NULL, sizeof(SourceEventCtx));
@@ -426,8 +404,7 @@ AVBufferRef *tx_io_register_cb(
     return source_event;
 }
 
-AVBufferRef *tx_io_create(TXMainContext *ctx,
-                          uint32_t identifier,
+AVBufferRef *tx_io_create(TXMainContext *ctx, uint32_t identifier,
                           AVDictionary *opts)
 {
     return sp_io_create(ctx, identifier, opts);
